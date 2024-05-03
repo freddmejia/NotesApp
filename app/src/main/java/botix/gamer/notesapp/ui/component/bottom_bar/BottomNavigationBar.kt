@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import botix.gamer.notesapp.ui.menu.profile.HomeScreen
-import botix.gamer.notesapp.ui.menu.profile.NoteScreen
+import botix.gamer.notesapp.ui.menu.note.NoteScreen
 import botix.gamer.notesapp.ui.menu.profile.ProfileScreen
 import botix.gamer.notesapp.ui.navigation.BottomNavItem
 

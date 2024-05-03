@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
-    //id("com.apollographql.apollo3").version("3.8.3")
+    id("com.apollographql.apollo3").version("3.8.3")
 
     //id("dagger.hilt.android.plugin")
 }
@@ -102,10 +102,15 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
 
     //apollo
-    //implementation("com.apollographql.apollo3:apollo-runtime:3.8.4")
+    implementation("com.apollographql.apollo3:apollo-runtime:3.8.3")
 
 }
 kapt {
     correctErrorTypes = true
 }
 
+apollo {
+    service("service") {
+        packageName.set("botix.gamer.notesapp")
+    }
+}
