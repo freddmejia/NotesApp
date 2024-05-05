@@ -1,9 +1,11 @@
 package botix.gamer.notesapp.ui.menu.note
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -28,11 +30,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -64,16 +68,14 @@ import botix.gamer.notesapp.data.model.Note
 import botix.gamer.notesapp.presentation.note.NoteViewModel
 import botix.gamer.notesapp.R
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NoteScreen(noteViewModel: NoteViewModel) {
+fun NoteScreen(
+    noteViewModel: NoteViewModel,
+    paddingValues: PaddingValues
+) {
 
     val presentDialog: Boolean by noteViewModel.presentDialog.observeAsState(initial = false)
-    val title: String by noteViewModel.title.observeAsState(initial = "")
-    val text: String by noteViewModel.text.observeAsState(initial = "")
-    val presentTextNote: Boolean by noteViewModel.presentTextNote.observeAsState(initial = false)
-
-
-
 
     //var openDialog = remember{ mutableStateOf(false) }
     val notes = listOf<Note>(
@@ -83,182 +85,55 @@ fun NoteScreen(noteViewModel: NoteViewModel) {
         Note(0,"Que es ser desarrolador Senior?","Preguntar a todos","24/4/2024","24/4/2024"),
         Note(0,"Valencia playa","Reuniones","24/4/2024","24/4/2024"),
         Note(0,"Keys","Aws","24/4/2024","24/4/2024"),
+
         )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(all = 10.dp)
-            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
-
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    MaterialTheme.colorScheme.surface,
-                )
-                .padding(all = 10.dp)
-        ) {
-            Box( modifier = Modifier.weight(1F)) {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 15.dp)
-                    ) {
-                        IconButton(
-                            onClick = {
-                                noteViewModel.handleDialogCreate(presentDialog = false)
-                            },
-
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-                        Text(
-                            text = stringResource(id = R.string.create_note),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically),
-
-                        )
-
-                        Spacer(modifier = Modifier.weight(1F))
-                        TextButton(
-                            onClick = {
-
-                            },
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.btn_ok),
-                                textAlign = TextAlign.End
-                            )
-                        }
-
-                    }
-
-                    BasicTextField(
-                        value = title,
-                        onValueChange = {
-                            noteViewModel.onNoteChange(
-                                title = it,
-                                text = text
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        textStyle = TextStyle(
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp
-                        )
-                    )
-
-                    if (presentTextNote) {
-                        BasicTextField(
-                            value = text,
-                            onValueChange = {
-                                noteViewModel.onNoteChange(
-                                    title = title,
-                                    text = it
-                                )
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            textStyle = TextStyle(
-                                color = Color.Black,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 15.sp
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Default
-                            ),
-
-                            )
-                    }
-                }
-
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .align(Alignment.End),
-            ) {
-                TextButton(
-                    onClick = {
-                        noteViewModel.handleDialogCreate(presentDialog = false)
-                    },
-                    modifier = Modifier.weight(0.4F)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.btn_cancel)
-
-                    )
-                }
-                //Divider(color = Color.Blue, thickness = 1.dp)
-                VerticalDivider(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp),
-                    color = Color.Gray
-                )
-                TextButton(
-                    onClick = {
-
-                    },
-                    modifier = Modifier.weight(0.4F)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.btn_save)
-                    )
-                }
-            }
-        }
-    }
-
-    /*if (presentDialog) {
+    if (presentDialog) {
         dialogCreateNote(noteViewModel = noteViewModel)
     }
-    Column(
+    Box (
         modifier = Modifier.fillMaxSize()
+            .padding(paddingValues)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1F)
-                .padding(bottom = 10.dp)
-        ) {
-            items(notes) {note ->
-                noteItem(note = note)
-            }
-        }
-        Button(
-            modifier = Modifier
-                .padding(all = 20.dp)
-                .align(Alignment.End),
-            onClick = {
-                noteViewModel.handleDialogCreate(presentDialog = true)
-            }
-        ) {
-            Row(
-                modifier = Modifier.align(Alignment.CenterVertically)
+        Column {
+            Box (
+                modifier = Modifier.weight(1F)
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                ) {
+                    items(notes) { note ->
+                        noteItem(note = note)
+                    }
+                }
             }
+
+            Button(
+                modifier = Modifier
+                    .padding(all = 20.dp)
+                    .align(Alignment.End),
+                onClick = {
+                    noteViewModel.handleDialogCreate(presentDialog = true)
+                }
+            ) {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                }
+            }
+
         }
-    }*/
+    }
 }
 
 @Composable
 fun dialogCreateNote( noteViewModel: NoteViewModel) {
+    val title: String by noteViewModel.title.observeAsState(initial = "")
+    val text: String by noteViewModel.text.observeAsState(initial = "")
+    val presentTextNote: Boolean by noteViewModel.presentTextNote.observeAsState(initial = false)
+
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
@@ -270,7 +145,6 @@ fun dialogCreateNote( noteViewModel: NoteViewModel) {
                 .fillMaxSize()
                 .padding(all = 10.dp)
                 .shadow(8.dp, shape = RoundedCornerShape(16.dp))
-
         ) {
             Column(
                 modifier = Modifier
@@ -278,51 +152,94 @@ fun dialogCreateNote( noteViewModel: NoteViewModel) {
                     .background(
                         MaterialTheme.colorScheme.surface,
                     )
-                    .padding(all = 10.dp)
             ) {
-                Box( modifier = Modifier.weight(1F)) {
-                    Text(text = "Insert some text")
-                }
-
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.End)
+                        .fillMaxWidth()
+                        .padding(bottom = 13.dp)
                 ) {
-                    TextButton(
+                    IconButton(
                         onClick = {
                             noteViewModel.handleDialogCreate(presentDialog = false)
-                        }
-                    ) {
-                        Text(text = "CANCEL")
+                        },
+                        ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null
+                        )
                     }
+                    Text(
+                        text = stringResource(id = R.string.create_note),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically),
 
+                        )
+
+                    Spacer(modifier = Modifier.weight(1F))
                     TextButton(
                         onClick = {
 
-                        }
+                        },
                     ) {
-                        Text(text = "SAVE")
+                        Text(
+                            text = stringResource(id = R.string.btn_ok),
+                            textAlign = TextAlign.End
+                        )
                     }
+
+                }
+
+                BasicTextField(
+                    value = title,
+                    onValueChange = {
+                        noteViewModel.onNoteChange(
+                            title = it,
+                            text = text
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
+                )
+
+                if (presentTextNote) {
+                    BasicTextField(
+                        value = text,
+                        onValueChange = {
+                            noteViewModel.onNoteChange(
+                                title = title,
+                                text = it
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 15.sp
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Default
+                        ),
+
+                        )
                 }
             }
         }
     }
-    /*AlertDialog(
-        onDismissRequest = {
-            noteViewModel.handleDialogCreate(presentDialog = false)
-        },
-        confirmButton = {
-
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-
-            }
-        }
-    )*/
 }
 
 @Composable
@@ -367,5 +284,5 @@ fun noteItem(note : Note) {
 @Preview
 @Composable
 fun previewL() {
-    NoteScreen(noteViewModel = NoteViewModel())
+    NoteScreen(noteViewModel = NoteViewModel(), paddingValues = PaddingValues())
 }
