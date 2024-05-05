@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import botix.gamer.notesapp.R
-import botix.gamer.notesapp.presentation.LoginViewModel
+import botix.gamer.notesapp.presentation.account.LoginViewModel
 
 @Composable
 fun LoginScreen(
@@ -90,7 +90,8 @@ fun loginForm(modifier: Modifier, loginViewModel: LoginViewModel) {
                 email = email,
                 onTextFieldChange = {
                     loginViewModel.onLoginChange(email = it, password = password)
-                })
+                }
+            )
 
             Spacer(modifier = Modifier.padding(10.dp))
             passwordField(

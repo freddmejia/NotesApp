@@ -1,4 +1,4 @@
-package botix.gamer.notesapp.presentation
+package botix.gamer.notesapp.presentation.account
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

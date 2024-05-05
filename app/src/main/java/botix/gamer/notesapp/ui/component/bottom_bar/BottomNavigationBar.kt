@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import botix.gamer.notesapp.presentation.note.NoteViewModel
 import botix.gamer.notesapp.ui.menu.profile.HomeScreen
 import botix.gamer.notesapp.ui.menu.note.NoteScreen
 import botix.gamer.notesapp.ui.menu.profile.ProfileScreen
@@ -60,7 +61,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 fun NavigationScreens(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.path) {
         composable(BottomNavItem.Home.path) { HomeScreen() }
-        composable(BottomNavItem.Note.path) { NoteScreen() }
+        composable(BottomNavItem.Note.path) { NoteScreen(noteViewModel = NoteViewModel()) }
         composable(BottomNavItem.Profile.path) { ProfileScreen() }
     }
 }
