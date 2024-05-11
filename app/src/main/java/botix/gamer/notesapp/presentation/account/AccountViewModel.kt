@@ -7,15 +7,12 @@ import androidx.lifecycle.viewModelScope
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-//@HiltViewModel
-class LoginViewModel : ViewModel() {
+class AccountViewModel : ViewModel() {
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
 
@@ -24,6 +21,9 @@ class LoginViewModel : ViewModel() {
 
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
+
+    private val _rPassword = MutableLiveData<String>()
+    val rPassword: LiveData<String> = _rPassword
 
     private val _isNewUser = MutableLiveData<Boolean>()
     val isNewUser: LiveData<Boolean> = _isNewUser
@@ -54,9 +54,17 @@ class LoginViewModel : ViewModel() {
         _loading.value = false
     }
 
-    fun onRegisterChange(name: String, email: String, password: String)  {
+    fun onNameChanged(name: String) {
         _name.value = name
+    }
+    fun onEmailChanged(email: String) {
         _email.value = email
+    }
+    fun onPasswordChanged(password: String) {
         _password.value = password
     }
+    fun onRPasswordChanged(rPassword: String) {
+        _rPassword.value = rPassword
+    }
+
 }

@@ -12,18 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import botix.gamer.notesapp.data.model.User
+import botix.gamer.notesapp.presentation.account.AccountViewModel
+import botix.gamer.notesapp.ui.account.AccountScreen
 import botix.gamer.notesapp.ui.theme.NotesAppTheme
-import botix.gamer.notesapp.presentation.account.LoginViewModel
-import botix.gamer.notesapp.presentation.note.NoteViewModel
 import botix.gamer.notesapp.ui.component.bottom_bar.MainScreen
-import botix.gamer.notesapp.ui.component.login.LoginScreen
-import botix.gamer.notesapp.ui.menu.note.NoteScreen
+import botix.gamer.notesapp.ui.account.LoginScreen
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
 
 class MainActivity : ComponentActivity() {
-    private val loginViewModel: LoginViewModel by viewModels()
-    private val noteViewModel: NoteViewModel by viewModels()
+    private val accountViewModel: AccountViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,16 +29,28 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+
             //NoteScreen(noteViewModel = noteViewModel)
             val navController = rememberNavController()
-            val resultLogin: Result<CompositionObj<User, String>> by loginViewModel.resultLogin.collectAsState(initial = Result.Empty)
+            val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
 
             when(resultLogin) {
                 is Result.Success -> {
                     MainScreen(navController = navController)
                 }
                 else  -> {
-                    LoginScreen(loginViewModel = loginViewModel)
+                    AccountScreen(
+                        accountViewModel = accountViewModel
+                    )
+                    /*LoginScreen(
+                        accountViewModel = AccountViewModel(),
+                        forgotPassOnClicked = {
+                            //
+                        },
+                        registerOnClicked = {
+                            //
+                        }
+                    )*/
                 }
             }
 

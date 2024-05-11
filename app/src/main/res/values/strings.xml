@@ -1,15 +1,21 @@
 <resources>
     <string name="app_name">NotesApp</string>
+    <string name="write_name">Write your name</string>
     <string name="write_email">Write your e-mail</string>
     <string name="write_password">Write your password</string>
-    <string name="login_button">Login</string>
+    <string name="rewrite_password">Re-write your password</string>
+
     <string name="shared_preferences">data</string>
     <!-- BUTTONS -->
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_save">SAVE</string>
     <string name="btn_ok">OK</string>
-
+    <string name="login_button">Login</string>
+    <string name="register_button">Register</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="new_user">New user?</string>
     <!-- TITLES -->
     <string name="create_note">Create note</string>
-
+    <string name="login">Login</string>
+    <string name="register">Register</string>
 </resources>
