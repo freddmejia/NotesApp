@@ -18,4 +18,9 @@ object AppModule {
     @Provides
     fun providerSharedPreferences(@ApplicationContext appContext: Context) : SharedPreferences =
         appContext.applicationContext.getSharedPreferences(appContext.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+
+
+    @Singleton
+    @Provides
+    fun provideApiGraph() = AdminApolloClient()
 }
