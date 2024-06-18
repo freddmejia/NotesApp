@@ -37,6 +37,8 @@ type Note {
 
   user: User!
 
+  title: String!
+
   note: String!
 
   status: String!
@@ -196,6 +198,10 @@ type Mutation {
   registerNote(input: NoteInput): Note
 
   updateNote(input: NoteUpdateInput): Note
+
+  forgotPasswordUser(input: ForgotPasswordInput!): ForgotPasswordResponse!
+
+  updatePasswordUser(input: NewPasswordWithCodInput!): NewPasswordWithCodResponse!
 }
 
 input LoginInput {
@@ -305,6 +311,8 @@ type UpdatePasswordResponse {
 input NoteInput {
   user_id: Int!
 
+  title: String!
+
   note: String!
 
   status: String!
@@ -313,9 +321,23 @@ input NoteInput {
 input NoteUpdateInput {
   id: ID!
 
+  title: String!
+
   note: String!
 
   status: String!
+}
+
+input NewPasswordWithCodInput {
+  email: String!
+
+  password: String!
+
+  password_confirmation: String!
+}
+
+type NewPasswordWithCodResponse {
+  success: Boolean!
 }
 
 """
