@@ -9,7 +9,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -23,8 +26,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import botix.gamer.notesapp.ui.navigation.AccountMenu
 import botix.gamer.notesapp.R
+import botix.gamer.notesapp.data.model.User
+import botix.gamer.notesapp.di.AdminApolloClient
+import botix.gamer.notesapp.domain.user.LoginUseCase
 import botix.gamer.notesapp.presentation.account.AccountViewModel
+import botix.gamer.notesapp.utils.CompositionObj
+import botix.gamer.notesapp.utils.Result
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     navController: NavHostController = rememberNavController(),
@@ -35,6 +44,17 @@ fun AccountScreen(
     val currentScreen = AccountMenu.valueOf(
         backStackEntry?.destination?.route ?: AccountMenu.Login.name
     )
+
+    val isAuthenticated by accountViewModel.isAuthenticated.observeAsState(false)
+
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            navController.navigate("main") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             ToolBarFootMatch(
@@ -44,7 +64,7 @@ fun AccountScreen(
             )
         }
     ) { paddingValues ->
-        NavHost(
+            NavHost(
             navController = navController,
             startDestination = AccountMenu.Login.name,
             modifier = Modifier.padding( paddingValues)
@@ -68,6 +88,30 @@ fun AccountScreen(
             ){
                 RegisterScreen(accountViewModel = accountViewModel)
             }
+        }
+    }
+}
+
+@Composable
+fun NavigationScreens(navController: NavHostController, accountViewModel: AccountViewModel) {
+    NavHost(navController = navController, startDestination = AccountMenu.Login.name) {
+        composable(
+            route = AccountMenu.Login.name
+        ){
+            LoginScreen(
+                accountViewModel = accountViewModel,
+                registerOnClicked = {
+                    navController.navigate(AccountMenu.Register.name)
+                },
+                forgotPassOnClicked = {
+                    navController.navigate(AccountMenu.Register.name)
+                }
+            )
+        }
+        composable(
+            route = AccountMenu.Register.name
+        ){
+            RegisterScreen(accountViewModel = accountViewModel)
         }
     }
 }
@@ -105,9 +149,15 @@ fun ToolBarFootMatch(
         }
     )
 }
-
+/*
 @Preview
 @Composable
 fun SeeAccountScreen() {
-    AccountScreen(accountViewModel = AccountViewModel())
-}
+    AccountScreen(accountViewModel = AccountViewModel(
+        loginUseCase = LoginUseCase(
+            userRepositoryImplementation = UserRepositoryImplementation(
+                adminApolloClient = AdminApolloClient()
+            )
+        )
+    ))
+}*/

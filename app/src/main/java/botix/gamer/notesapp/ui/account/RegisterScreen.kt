@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import botix.gamer.notesapp.R
+import botix.gamer.notesapp.di.AdminApolloClient
+import botix.gamer.notesapp.domain.user.LoginUseCase
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 
 @Composable
@@ -78,7 +81,7 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
                     .width(64.dp)
                     .align(Alignment.CenterHorizontally),
                 color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                //trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
         else {
@@ -123,6 +126,7 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameField(name: String, onTextFieldChange: (String) -> Unit) {
     TextField(
@@ -137,11 +141,12 @@ fun NameField(name: String, onTextFieldChange: (String) -> Unit) {
         placeholder = { Text(text =  stringResource(id = R.string.write_name)) },
         singleLine = true,
         maxLines = 1,
-        colors = TextFieldDefaults.colors(
-        )
+        /*colors = TextFieldDefaults.colors(
+        )*/
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
     var passwordFieldVisible by rememberSaveable {
@@ -160,7 +165,7 @@ fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
         placeholder = { Text(text =  stringResource(id = R.string.rewrite_password)) },
         singleLine = true,
         maxLines = 1,
-        colors = TextFieldDefaults.colors(),
+        //colors = TextFieldDefaults.colors(),
         visualTransformation = if (passwordFieldVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '*'),
         trailingIcon = {
             val image = if (passwordFieldVisible)
@@ -175,8 +180,16 @@ fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
 
     )
 }
+
+/*
 @Preview
 @Composable
 fun SeeRegister() {
-    RegisterScreen(accountViewModel = AccountViewModel())
-}
+    RegisterScreen(accountViewModel = AccountViewModel(
+        loginUseCase = LoginUseCase(
+            userRepositoryImplementation = UserRepositoryImplementation(
+                adminApolloClient = AdminApolloClient()
+            )
+        )
+    ))
+}*/

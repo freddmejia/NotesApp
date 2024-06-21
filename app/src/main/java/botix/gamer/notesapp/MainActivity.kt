@@ -4,22 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import botix.gamer.notesapp.presentation.account.AccountViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.presentation.account.AccountViewModel
-import botix.gamer.notesapp.ui.account.AccountScreen
-import botix.gamer.notesapp.ui.theme.NotesAppTheme
-import botix.gamer.notesapp.ui.component.bottom_bar.MainScreen
-import botix.gamer.notesapp.ui.account.LoginScreen
+import botix.gamer.notesapp.ui.navigation.NoteAppScreenMenu
 import botix.gamer.notesapp.utils.CompositionObj
-import botix.gamer.notesapp.utils.Result
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val accountViewModel: AccountViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,11 +25,24 @@ class MainActivity : ComponentActivity() {
         setContent {
 
 
+
             //NoteScreen(noteViewModel = noteViewModel)
             val navController = rememberNavController()
-            val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
+            val navBarController = rememberNavController()
+            //val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = botix.gamer.notesapp.utils.Result.Empty)
+            /*MaterialTheme{
+                Surface {
+                    MyApp()
+                }
+            }*/
 
-            when(resultLogin) {
+            NoteAppScreenMenu(
+                navController = navController,
+                navBarController = navBarController,
+                accountViewModel = accountViewModel
+            )
+
+            /*when(resultLogin) {
                 is Result.Success -> {
                     MainScreen(navController = navController)
                 }
@@ -52,25 +60,10 @@ class MainActivity : ComponentActivity() {
                         }
                     )*/
                 }
-            }
+            }*/
 
 
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NotesAppTheme {
-        Greeting("Android")
-    }
-}

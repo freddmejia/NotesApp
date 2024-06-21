@@ -77,10 +77,11 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.2.1")
 
     //compose - navigation
-    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation ("androidx.compose.material:material:1.5.4")
+    //implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.0-alpha01")
     //implementation("androidx.compose.material:material-*:1.6.0-alpha05")
-    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
 
     //hilt

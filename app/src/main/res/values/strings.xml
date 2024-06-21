@@ -18,4 +18,10 @@
     <string name="create_note">Create note</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+
+    <string name="main_menu">Main</string>
+    <string name="splash_menu">Splash</string>
+    <string name="account_menu">Login</string>
+
+
 </resources>
