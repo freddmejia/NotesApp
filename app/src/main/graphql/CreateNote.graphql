@@ -1,0 +1,18 @@
+mutation registerNote($title: String!, $note: String!, $status: String!, $user_id: Int!) {
+    registerNote(input: {
+        title: $title,
+        note: $note,
+        status: $status,
+        user_id: $user_id
+    }){
+        id
+        title
+        note
+        created_at
+        user{
+            name
+        }
+        updated_at
+        created_at
+    }
+}

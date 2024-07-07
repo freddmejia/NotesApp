@@ -3,8 +3,12 @@ package botix.gamer.notesapp.di
 import android.content.Context
 import android.content.SharedPreferences
 import botix.gamer.notesapp.R
+import botix.gamer.notesapp.data.repository.NoteRepositoryImplementation
 import botix.gamer.notesapp.data.reposuserLoginory.UserRepositoryImplementation
+import botix.gamer.notesapp.domain.note.NoteCreateUseCase
+import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
 import botix.gamer.notesapp.domain.user.LoginUseCase
+import botix.gamer.notesapp.domain.user.RegisterUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +33,7 @@ object AppModule {
     @Provides
     fun provideApiGraph() = AdminApolloClient()
 
-
+    //REGISTER AND LOGIN
     @Singleton
     @Provides
     fun provideUserRepositoryImplementation(adminApolloClient: AdminApolloClient, adminSharedPreference: AdminSharedPreference) = UserRepositoryImplementation(adminApolloClient, adminSharedPreference)
@@ -38,4 +42,26 @@ object AppModule {
     @Provides
     fun provideLoginUseCase(userRepositoryImplementation: UserRepositoryImplementation) = LoginUseCase(userRepositoryImplementation)
 
+
+    @Singleton
+    @Provides
+    fun provideRegisterUseCase(userRepositoryImplementation: UserRepositoryImplementation) = RegisterUseCase(userRepositoryImplementation)
+    //
+
+
+    //NOTE, CRUD
+    @Singleton
+    @Provides
+    fun provideNoteRepositoryImplementation(adminApolloClient: AdminApolloClient) = NoteRepositoryImplementation(adminApolloClient)
+
+
+    @Singleton
+    @Provides
+    fun provideNoteCreateUseCase(noteRepositoryImplementation: NoteRepositoryImplementation) = NoteCreateUseCase(noteRepositoryImplementation)
+
+
+    @Singleton
+    @Provides
+    fun provideNoteUpdateUseCase(noteRepositoryImplementation: NoteRepositoryImplementation) = NoteUpdateUseCase(noteRepositoryImplementation)
+    //
 }

@@ -1,8 +1,7 @@
 package botix.gamer.notesapp.data.reposuserLoginory
 
-import android.util.Log
-import androidx.core.content.edit
 import botix.gamer.notesapp.LoginMutation
+import botix.gamer.notesapp.RegisterMutation
 import botix.gamer.notesapp.data.model.TokenPayload
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.data.repository.UserRepository
@@ -40,6 +39,49 @@ class UserRepositoryImplementation @Inject constructor(
                 saveUser(
                     user = user!!,
                     accesToken = userLogin.access_token.toString(),
+                    tokenPayload = tokenPayload!!
+                )
+            }
+            return user
+        }
+        catch (e: Throwable){
+            return null
+        }
+    }
+
+    override suspend fun register(
+        name: String,
+        email: String,
+        password: String,
+        rPassword: String
+    ): User? {
+        try {
+            var user : User? = null
+            var tokenPayload: TokenPayload ? = null
+            val responseRegister = adminApolloClient.getApolloClient().mutation(
+                RegisterMutation(
+                    name = name,
+                    email = email,
+                    password = password,
+                    password_confirmation = rPassword
+                )
+            ).execute()
+
+            responseRegister?.data?.register?.let { userRegister ->
+                user = User(
+                    id = userRegister.tokens!!.user!!.id.toInt(),
+                    name = userRegister.tokens!!.user!!.name,
+                    email = userRegister.tokens!!.user!!.email
+                )
+                tokenPayload = TokenPayload(
+                    accessToken = userRegister.tokens!!.access_token!!,
+                    refreshToken = userRegister.tokens!!.refresh_token!!,
+                    expiresIn = userRegister.tokens!!.expires_in!!,
+                    tokenType = userRegister.tokens!!.token_type!!
+                )
+                saveUser(
+                    user = user!!,
+                    accesToken = userRegister.tokens!!.access_token.toString(),
                     tokenPayload = tokenPayload!!
                 )
             }

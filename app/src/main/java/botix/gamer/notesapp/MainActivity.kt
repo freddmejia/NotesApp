@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
             //NoteScreen(noteViewModel = noteViewModel)
             val navController = rememberNavController()
             val navBarController = rememberNavController()
+            val navAccountController = rememberNavController()
             //val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = botix.gamer.notesapp.utils.Result.Empty)
             /*MaterialTheme{
                 Surface {
@@ -39,7 +40,8 @@ class MainActivity : ComponentActivity() {
             NoteAppScreenMenu(
                 navController = navController,
                 navBarController = navBarController,
-                accountViewModel = accountViewModel
+                navAccountController = navAccountController,
+                accountViewModel = accountViewModel,
             )
 
             /*when(resultLogin) {

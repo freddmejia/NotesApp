@@ -12,6 +12,7 @@ import javax.inject.Inject
 
 interface  UserRepository {
     suspend fun login(email: String, password: String): User?
+    suspend fun register(name: String, email: String, password: String, rPassword: String): User?
 }
 /*
 class UserRepository @Inject constructor(

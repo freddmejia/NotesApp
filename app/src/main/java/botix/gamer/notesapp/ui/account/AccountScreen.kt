@@ -1,5 +1,6 @@
 package botix.gamer.notesapp.ui.account
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,6 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -37,20 +40,22 @@ import botix.gamer.notesapp.utils.Result
 @Composable
 fun AccountScreen(
     navController: NavHostController = rememberNavController(),
+    navAccountController: NavHostController = rememberNavController(),
     accountViewModel: AccountViewModel
 ) {
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
+    val backStackEntry by navAccountController.currentBackStackEntryAsState()
     val currentScreen = AccountMenu.valueOf(
         backStackEntry?.destination?.route ?: AccountMenu.Login.name
     )
 
     val isAuthenticated by accountViewModel.isAuthenticated.observeAsState(false)
+    Log.e("", "AccountScreen: $isAuthenticated")
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            navController.navigate("main") {
-                popUpTo("login") { inclusive = true }
+            navController.navigate(AccountMenu.MainMenu.name) {
+                popUpTo(AccountMenu.AccountLogRegister.name) { inclusive = true }
             }
         }
     }
@@ -59,13 +64,13 @@ fun AccountScreen(
         topBar = {
             ToolBarFootMatch(
                 currentScreen = currentScreen,
-                navigationBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+                navigationBack = navAccountController.previousBackStackEntry != null,
+                navigateUp = { navAccountController.navigateUp() }
             )
         }
     ) { paddingValues ->
             NavHost(
-            navController = navController,
+            navController = navAccountController,
             startDestination = AccountMenu.Login.name,
             modifier = Modifier.padding( paddingValues)
 
@@ -73,21 +78,31 @@ fun AccountScreen(
             composable(
                 route = AccountMenu.Login.name
             ){
+                accountViewModel.resetResultLogin()
                 LoginScreen(
                     accountViewModel = accountViewModel,
                     registerOnClicked = {
-                        navController.navigate(AccountMenu.Register.name)
+                        navAccountController.navigate(AccountMenu.Register.name)
                     },
                     forgotPassOnClicked = {
-                        navController.navigate(AccountMenu.Register.name)
+                        navAccountController.navigate(AccountMenu.ForgotPassword.name)
+
                     }
                 )
             }
             composable(
                 route = AccountMenu.Register.name
             ){
+                accountViewModel.resetResultLogin()
                 RegisterScreen(accountViewModel = accountViewModel)
             }
+            composable(
+                route = AccountMenu.ForgotPassword.name
+            ){
+                accountViewModel.resetResultLogin()
+                ForgotPasswordScreen(accountViewModel = accountViewModel)
+            }
+
         }
     }
 }

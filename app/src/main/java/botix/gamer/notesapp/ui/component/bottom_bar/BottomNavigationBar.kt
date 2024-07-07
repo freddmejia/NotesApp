@@ -119,7 +119,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 fun NavigationScreens(navController: NavHostController, paddingValues: PaddingValues) {
     NavHost(navController, startDestination = BottomNavItem.Home.path) {
         composable(BottomNavItem.Home.path) { HomeScreen() }
-        composable(BottomNavItem.Note.path) { NoteScreen(noteViewModel = NoteViewModel(), paddingValues = paddingValues) }
+        composable(BottomNavItem.Note.path) { NoteScreen(paddingValues = paddingValues) }
         composable(BottomNavItem.Profile.path) { ProfileScreen() }
     }
 }

@@ -7,19 +7,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.domain.user.LoginUseCase
+import botix.gamer.notesapp.domain.user.RegisterUseCase
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase,
 ) : ViewModel() {
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
@@ -49,6 +49,11 @@ class AccountViewModel @Inject constructor(
         _password.value = password
     }
 
+    fun isLoggedUser2() = isAuthenticated
+
+    fun resetResultLogin() {
+        _resultLogin.value = Result.Empty
+    }
     fun isLoggedUser() {
         _isAuthenticated.value = false
         _resultLogin.value = Result.Empty
@@ -60,6 +65,30 @@ class AccountViewModel @Inject constructor(
         )
         _isAuthenticated.value = true
         Log.e("", "launchLogin isLoggedUser viewmodel: "+loginUseCase.userLogged().toString() )
+    }
+
+    fun launchLogin2() = viewModelScope.launch {
+        _isAuthenticated.value = false
+        _resultLogin.value = Result.Empty
+        _loading.value = true
+        val login = loginUseCase.execute(
+            email = _email.value.toString(),
+            password = _password.value.toString()
+        )
+        login?.let {
+            _resultLogin.value = Result.Success(
+                CompositionObj(it, "")
+            )
+            //_isAuthenticated.value = true
+        }?: run {
+            //_isAuthenticated.value = false
+            _resultLogin.value = Result.Error("")
+        }
+        _resultLogin.value = Result.Success(
+            CompositionObj(User(), "")
+        )
+        _loading.value = false
+        _isAuthenticated.value = true
     }
     fun launchLogin() = viewModelScope.launch {
         _isAuthenticated.value = false
@@ -82,7 +111,30 @@ class AccountViewModel @Inject constructor(
     }
 
 
-    fun launchRegister(isNewUser: Boolean) = viewModelScope.launch{
+
+    fun launchRegister() = viewModelScope.launch {
+        _isAuthenticated.value = false
+        _resultLogin.value = Result.Empty
+        _loading.value = true
+        val login = registerUseCase.execute(
+            name = _name.value.toString(),
+            email = _email.value.toString(),
+            password = _password.value.toString(),
+            rPassword = _rPassword.value.toString()
+        )
+        login?.let {
+            _resultLogin.value = Result.Success(
+                CompositionObj(it, "")
+            )
+            _isAuthenticated.value = true
+        }?: run {
+            _isAuthenticated.value = false
+            _resultLogin.value = Result.Error("")
+        }
+        _loading.value = false
+    }
+
+    /*fun launchRegister(isNewUser: Boolean) = viewModelScope.launch{
         _isNewUser.value = isNewUser
         _resultLogin.value = Result.Empty
         _loading.value = true
@@ -93,7 +145,7 @@ class AccountViewModel @Inject constructor(
         )
         _isAuthenticated.value = true
         _loading.value = false
-    }
+    }*/
 
     fun onNameChanged(name: String) {
         _name.value = name
