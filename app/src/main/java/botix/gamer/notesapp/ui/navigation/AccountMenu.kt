@@ -14,8 +14,3 @@ enum class AccountMenu(@StringRes val title: Int){
     SplashMenu(title = R.string.splash_menu),
     AccountLogRegister(title = R.string.account_menu)
 }
-/*
-    <string name="main_menu">Main</string>
-    <string name="splash_menu">Splash</string>
-    <string name="account_menu">Login</string>
- */
