@@ -1,0 +1,20 @@
+query fetchNotesbyUserId($user_id: ID!, $status: String!) {
+    notes_by_id_user(
+        user_id: $user_id,
+        status: $status,
+        orderBy: [{column: CREATED_AT, order: DESC}]
+    )
+    {
+        paginatorInfo {
+            hasMorePages
+            total
+        }
+        data {
+            id
+            title
+            note
+            created_at
+            updated_at
+        }
+    }
+}

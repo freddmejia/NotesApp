@@ -1,5 +1,6 @@
 package botix.gamer.notesapp.data.repository
 
+import botix.gamer.notesapp.FetchNotesbyUserIdQuery
 import botix.gamer.notesapp.RegisterNoteMutation
 import botix.gamer.notesapp.UpdateNoteMutation
 import botix.gamer.notesapp.data.model.Note
@@ -74,6 +75,38 @@ class NoteRepositoryImplementation @Inject constructor(
         }
         catch (e: Throwable){
             return null
+        }
+    }
+
+    override suspend fun fechNotesByUserId(userId: Int, status: String): ArrayList<Note> {
+        try {
+            var notes : ArrayList<Note> = arrayListOf()
+            val responseCreate = adminApolloClient.getApolloClient()
+                .query(
+                    FetchNotesbyUserIdQuery(
+                        user_id = userId.toString(),
+                        status = status
+                    )
+                ).execute()
+
+            responseCreate?.data?.notes_by_id_user?.let { note->
+                note.data.forEach { noteItem->
+                    notes.add(
+                        Note(
+                            id =  noteItem.id.toInt(),
+                            title = noteItem.title,
+                            note = noteItem.note,
+                            createdAt = noteItem.created_at.toString(),
+                            updatedAt = noteItem.updated_at.toString()
+                        )
+                    )
+                }
+
+            }
+            return notes
+        }
+        catch (e: Throwable){
+            return arrayListOf()
         }
     }
 

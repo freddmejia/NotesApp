@@ -27,5 +27,6 @@
     <string name="invalid_email_or_password">Email or password invalid, try again.</string>
     <string name="invalid_passwords">Fill form or passwords not same</string>
     <string name="forgot_password_screen">This available soon.</string>
+    <string name="no_data">No data, create one note.</string>
 
 </resources>

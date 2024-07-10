@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import botix.gamer.notesapp.R
 import botix.gamer.notesapp.data.repository.NoteRepositoryImplementation
 import botix.gamer.notesapp.data.reposuserLoginory.UserRepositoryImplementation
+import botix.gamer.notesapp.domain.note.FetchNoteByUserUseCase
 import botix.gamer.notesapp.domain.note.NoteCreateUseCase
 import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
 import botix.gamer.notesapp.domain.user.LoginUseCase
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -29,9 +31,25 @@ object AppModule {
     fun provideAdminSharedPreference(@ApplicationContext appContext: Context):
             AdminSharedPreference = AdminSharedPreference(appContext)
 
+    @Provides
+    fun provideTokenManager(sharedPreferences: SharedPreferences):
+            TokenManager = TokenManager(sharedPreferences)
+
+    @Provides
+    fun provideAuthInterceptor(tokenManager: TokenManager):
+            AuthInterceptor = AuthInterceptor(tokenManager)
+
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+
     @Singleton
     @Provides
-    fun provideApiGraph() = AdminApolloClient()
+    fun provideApiGraph(okHttpClient: OkHttpClient) = AdminApolloClient(okHttpClient = okHttpClient)
 
     //REGISTER AND LOGIN
     @Singleton
@@ -63,5 +81,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNoteUpdateUseCase(noteRepositoryImplementation: NoteRepositoryImplementation) = NoteUpdateUseCase(noteRepositoryImplementation)
+
+
+    @Singleton
+    @Provides
+    fun provideFetchNoteByUserUseCase(noteRepositoryImplementation: NoteRepositoryImplementation) = FetchNoteByUserUseCase(noteRepositoryImplementation)
+
+
     //
 }

@@ -1,6 +1,7 @@
 package botix.gamer.notesapp.utils
 
 import android.content.Context
+import android.util.Log
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import botix.gamer.notesapp.R
@@ -21,6 +22,7 @@ class Utility {
         fun fetchLocalUser(context: Context): User? {
             try {
                 val sharedPreferences = context.getSharedPreferences(context.resources.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+                Log.e("", "fetchLocalUser: "+sharedPreferences.getString("accessToken","") )
                 return User(JSONObject(sharedPreferences!!.getString("user","")))
             }
             catch (e: java.lang.Exception){

@@ -38,7 +38,7 @@ class UserRepositoryImplementation @Inject constructor(
                 )
                 saveUser(
                     user = user!!,
-                    accesToken = userLogin.access_token.toString(),
+                    accessToken = userLogin.access_token.toString(),
                     tokenPayload = tokenPayload!!
                 )
             }
@@ -81,7 +81,7 @@ class UserRepositoryImplementation @Inject constructor(
                 )
                 saveUser(
                     user = user!!,
-                    accesToken = userRegister.tokens!!.access_token.toString(),
+                    accessToken = userRegister.tokens!!.access_token.toString(),
                     tokenPayload = tokenPayload!!
                 )
             }
@@ -104,13 +104,13 @@ class UserRepositoryImplementation @Inject constructor(
 
     }
 
-    private fun saveUser(user: User, accesToken: String, tokenPayload: TokenPayload) {
+    private fun saveUser(user: User, accessToken: String, tokenPayload: TokenPayload) {
 
         var jsonUser = JSONObject()
         jsonUser.put("id",user.id)
         jsonUser.put("name",user.name)
         jsonUser.put("email",user.email)
-        jsonUser.put("accesToken",accesToken)
+        //jsonUser.put("accesToken",accesToken)
 
         var jsonTokenPayload = JSONObject()
         jsonTokenPayload.put("accessToken",tokenPayload.accessToken)
@@ -122,6 +122,7 @@ class UserRepositoryImplementation @Inject constructor(
             this?.putString("user",jsonUser.toString())
             this?.putString("tokenPayload",jsonTokenPayload.toString())
             this?.putBoolean("userIsLogged",true)
+            this?.putString("accessToken",accessToken)
             this?.apply()
         }
     }
