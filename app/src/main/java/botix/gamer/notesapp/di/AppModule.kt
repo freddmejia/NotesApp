@@ -10,6 +10,7 @@ import botix.gamer.notesapp.domain.note.NoteCreateUseCase
 import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
 import botix.gamer.notesapp.domain.user.LoginUseCase
 import botix.gamer.notesapp.domain.user.RegisterUseCase
+import botix.gamer.notesapp.domain.user.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,6 +65,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRegisterUseCase(userRepositoryImplementation: UserRepositoryImplementation) = RegisterUseCase(userRepositoryImplementation)
+
+    @Singleton
+    @Provides
+    fun provideUpdateUserUseCase(userRepositoryImplementation: UserRepositoryImplementation) = UpdateUserUseCase(userRepositoryImplementation)
     //
 
 

@@ -2,6 +2,7 @@ package botix.gamer.notesapp.data.reposuserLoginory
 
 import botix.gamer.notesapp.LoginMutation
 import botix.gamer.notesapp.RegisterMutation
+import botix.gamer.notesapp.UpdatedUserMutation
 import botix.gamer.notesapp.data.model.TokenPayload
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.data.repository.UserRepository
@@ -92,6 +93,45 @@ class UserRepositoryImplementation @Inject constructor(
         }
     }
 
+    override suspend fun updateUser(
+        id: Int,
+        name: String,
+        email: String,
+        password: String,
+        rPassword: String
+    ): Boolean {
+        try {
+            var updateUser  = false
+            val responseRegister = adminApolloClient.getApolloClient().mutation(
+                UpdatedUserMutation(
+                    id = id,
+                    name = name,
+                    password = if (password.replace("\\s".toRegex(), "").isNotEmpty()) password else "null",
+                    password_confirmation = rPassword
+                )
+            ).execute()
+
+            responseRegister?.data?.updatedUser?.success?.let {
+                if (it) {
+                    updateUser = true
+                    val user = User(
+                        id = id,
+                        name = name,
+                        email = email
+                    )
+                    updatePreferencesUser(
+                        user = user
+                    )
+                }
+
+            }
+            return updateUser
+        }
+        catch (e: Throwable){
+            return false
+        }
+    }
+
     fun userLogged(): Boolean {
         var isLogged = false
         try {
@@ -105,12 +145,9 @@ class UserRepositoryImplementation @Inject constructor(
     }
 
     private fun saveUser(user: User, accessToken: String, tokenPayload: TokenPayload) {
-
-        var jsonUser = JSONObject()
-        jsonUser.put("id",user.id)
-        jsonUser.put("name",user.name)
-        jsonUser.put("email",user.email)
-        //jsonUser.put("accesToken",accesToken)
+        updatePreferencesUser(
+            user = user
+        )
 
         var jsonTokenPayload = JSONObject()
         jsonTokenPayload.put("accessToken",tokenPayload.accessToken)
@@ -119,10 +156,20 @@ class UserRepositoryImplementation @Inject constructor(
         jsonTokenPayload.put("tokenType",tokenPayload.tokenType)
 
         with(adminSharedPreference.getSharedPreferences()?.edit()){
-            this?.putString("user",jsonUser.toString())
             this?.putString("tokenPayload",jsonTokenPayload.toString())
             this?.putBoolean("userIsLogged",true)
             this?.putString("accessToken",accessToken)
+            this?.apply()
+        }
+    }
+
+    private fun updatePreferencesUser(user: User) {
+        var jsonUser = JSONObject()
+        jsonUser.put("id",user.id)
+        jsonUser.put("name",user.name)
+        jsonUser.put("email",user.email)
+        with(adminSharedPreference.getSharedPreferences()?.edit()) {
+            this?.putString("user", jsonUser.toString())
             this?.apply()
         }
     }

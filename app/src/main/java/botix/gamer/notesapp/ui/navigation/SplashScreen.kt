@@ -45,7 +45,10 @@ fun SplashScreen(navController: NavController, accountViewModel: AccountViewMode
             }
         }
         else {
-            navController.navigate(AccountMenu.AccountLogRegister.name) {
+            /*navController.navigate(AccountMenu.AccountLogRegister.name) {
+                popUpTo(AccountMenu.SplashMenu.name) { inclusive = true }
+            }*/
+            navController.navigate(AccountMenu.Login.name) {
                 popUpTo(AccountMenu.SplashMenu.name) { inclusive = true }
             }
         }

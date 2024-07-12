@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.ui.navigation.NoteAppScreenMenu
+import botix.gamer.notesapp.ui.navigation.NoteAppScreenMenuV2
 import botix.gamer.notesapp.utils.CompositionObj
 
 @AndroidEntryPoint
@@ -37,10 +38,9 @@ class MainActivity : ComponentActivity() {
                 }
             }*/
 
-            NoteAppScreenMenu(
+            NoteAppScreenMenuV2(
                 navController = navController,
                 navBarController = navBarController,
-                navAccountController = navAccountController,
                 accountViewModel = accountViewModel,
             )
 

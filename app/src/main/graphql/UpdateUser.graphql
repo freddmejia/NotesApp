@@ -1,0 +1,12 @@
+mutation updatedUser($id: Int!, $name: String!, $password: String!, $password_confirmation: String!) {
+    updatedUser(
+        input: {
+            id: $id,
+            name: $name
+            password: $password,
+            password_confirmation: $password_confirmation
+        }
+    ) {
+        success
+    }
+}

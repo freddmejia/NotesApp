@@ -13,7 +13,7 @@
     <string name="login_button">Login</string>
     <string name="register_button">Register</string>
     <string name="update_button">Update</string>
-    <string name="close_session">Close session</string>
+    <string name="close_session">Log out</string>
     <string name="forgot_password">Forgot password</string>
     <string name="new_user">New user?</string>
     <!-- TITLES -->

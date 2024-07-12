@@ -31,19 +31,20 @@ import botix.gamer.notesapp.ui.navigation.BottomNavItem
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(navController: NavHostController, navBarController: NavHostController) {
     Scaffold(
         topBar = {
             TabNavigationBar(title = "Note app")
         },
         bottomBar = {
             BottomNavigationBar(
-                navController = navController
+                navBarController = navBarController
             )
         }
     ) { paddingValues ->
         NavigationScreens(
             navController = navController,
+            navBarController = navBarController,
             paddingValues = paddingValues
         )
     }
@@ -69,7 +70,7 @@ fun TabNavigationBar(title: String) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(navBarController: NavHostController) {
     val navItems = listOf(BottomNavItem.Home, BottomNavItem.Note, BottomNavItem.Profile)
     var selectedItem by rememberSaveable { mutableIntStateOf(0) }
 
@@ -87,8 +88,8 @@ fun BottomNavigationBar(navController: NavHostController) {
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
-                    navController.navigate(item.path) {
-                        navController.graph.startDestinationRoute?.let { route ->
+                    navBarController.navigate(item.path) {
+                        navBarController.graph.startDestinationRoute?.let { route ->
                             popUpTo(route) { saveState = true }
                         }
                         launchSingleTop = true
@@ -100,11 +101,10 @@ fun BottomNavigationBar(navController: NavHostController) {
     }
 }
 @Composable
-fun NavigationScreens(navController: NavHostController, paddingValues: PaddingValues) {
-
-    NavHost(navController, startDestination = BottomNavItem.Home.path) {
+fun NavigationScreens(navController: NavHostController, navBarController: NavHostController, paddingValues: PaddingValues) {
+    NavHost(navBarController, startDestination = BottomNavItem.Home.path) {
         composable(BottomNavItem.Home.path) { HomeScreen(paddingValues = paddingValues) }
         composable(BottomNavItem.Note.path) { NoteScreen(paddingValues = paddingValues) }
-        composable(BottomNavItem.Profile.path) { ProfileScreen(paddingValues = paddingValues) }
+        composable(BottomNavItem.Profile.path) { ProfileScreen(navController = navController, paddingValues = paddingValues) }
     }
 }

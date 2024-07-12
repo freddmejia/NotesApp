@@ -11,17 +11,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,17 +26,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import botix.gamer.notesapp.ui.navigation.AccountMenu
 import botix.gamer.notesapp.R
-import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.di.AdminApolloClient
-import botix.gamer.notesapp.domain.user.LoginUseCase
 import botix.gamer.notesapp.presentation.account.AccountViewModel
-import botix.gamer.notesapp.utils.CompositionObj
-import botix.gamer.notesapp.utils.Result
 
 @Composable
 fun AccountScreen(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
+    navAccountController: NavHostController,
+    /*
+        navController: NavHostController = rememberNavController(),
     navAccountController: NavHostController = rememberNavController(),
+     */
     accountViewModel: AccountViewModel
 ) {
 
@@ -49,7 +45,6 @@ fun AccountScreen(
     )
 
     val isAuthenticated by accountViewModel.isAuthenticated.observeAsState(false)
-    Log.e("", "AccountScreen: $isAuthenticated")
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
