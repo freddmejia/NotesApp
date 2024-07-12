@@ -5,7 +5,7 @@ type Query {
 
   users("Filters by name. Accepts SQL LIKE wildcards `%` and `_`." name: String, "Limits number of fetched items." first: Int = 10, "The offset from which items are returned." page: Int): UserPaginator
 
-  notes_by_id_user(user_id: ID!, status: String!, orderBy: [QueryNotesByIdUserOrderByOrderByClause!], "Limits number of fetched items." first: Int = 5, "The offset from which items are returned." page: Int): NotePaginator
+  notes_by_id_user(user_id: ID!, status: String!, orderBy: [QueryNotesByIdUserOrderByOrderByClause!], "Limits number of fetched items." first: Int = 200, "The offset from which items are returned." page: Int): NotePaginator
 }
 
 """
@@ -202,6 +202,8 @@ type Mutation {
   forgotPasswordUser(input: ForgotPasswordInput!): ForgotPasswordResponse!
 
   updatePasswordUser(input: NewPasswordWithCodInput!): NewPasswordWithCodResponse!
+
+  updatedUser(input: UpdateUserInput!): NewPasswordWithCodResponse!
 }
 
 input LoginInput {
@@ -338,6 +340,16 @@ input NewPasswordWithCodInput {
 
 type NewPasswordWithCodResponse {
   success: Boolean!
+}
+
+input UpdateUserInput {
+  id: Int!
+
+  name: String!
+
+  password: String!
+
+  password_confirmation: String!
 }
 
 """
