@@ -182,8 +182,6 @@ fun EmailField(email: String, onTextFieldChange: (String) -> Unit) {
         placeholder = { Text(text =  stringResource(id = R.string.write_email)) },
         singleLine = true,
         maxLines = 1,
-        /*colors = TextFieldDefaults.colors(
-        )*/
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)

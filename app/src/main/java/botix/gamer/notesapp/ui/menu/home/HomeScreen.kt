@@ -1,4 +1,4 @@
-package botix.gamer.notesapp.ui.menu.profile
+package botix.gamer.notesapp.ui.menu.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

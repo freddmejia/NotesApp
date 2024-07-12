@@ -36,7 +36,6 @@ import botix.gamer.notesapp.presentation.account.AccountViewModel
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     navController: NavHostController = rememberNavController(),

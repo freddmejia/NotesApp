@@ -3,6 +3,10 @@ package botix.gamer.notesapp.ui.menu.note
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,21 +27,29 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -63,9 +75,9 @@ import botix.gamer.notesapp.presentation.note.NoteViewModel
 import botix.gamer.notesapp.R
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
-import botix.gamer.notesapp.utils.Utility
+import kotlinx.coroutines.delay
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun NoteScreen(
     noteViewModel: NoteViewModel = hiltViewModel(),
@@ -80,7 +92,6 @@ fun NoteScreen(
         initial = Result.Empty
     )
     val userId: Int by noteViewModel.userId.observeAsState(initial = 0)
-
     val loading: Boolean by noteViewModel.loading.observeAsState(initial = false)
 
 
@@ -103,9 +114,8 @@ fun NoteScreen(
 
 
     if (presentDialog) {
-        dialogCreateNote(noteViewModel = noteViewModel)
+        DialogCreateNote(noteViewModel = noteViewModel)
     }
-
 
 
     Box (
@@ -142,13 +152,27 @@ fun NoteScreen(
                             )
                     ) {
                         if (resultListNotes is Result.Success) {
-                            items((resultListNotes as Result.Success<CompositionObj<ArrayList<Note>, String>>).data.data) { note ->
-                                noteItem(
-                                    note = note,
-                                    fetchNoteById = { noteId: Int ->
-                                        noteViewModel.fetchLocalListNoteById(noteId = noteId)
+                            items(
+                                (resultListNotes as Result.Success<CompositionObj<ArrayList<Note>, String>>).data.data,
+                                key = {
+                                    it.id
+                                }
+                            ) { note ->
+                                SwipeToDeleteContainer(
+                                    item = note,
+                                    onDelete = {
+                                        noteViewModel.deleteNoById(note = note)
                                     }
-                                )
+
+                                ){
+                                    NoteItem(
+                                        note = it,
+                                        fetchNoteById = { noteId: Int ->
+                                            noteViewModel.fetchLocalListNoteById(noteId = noteId)
+                                        }
+                                    )
+                                }
+
                             }
                         } else {
                             item {
@@ -174,7 +198,6 @@ fun NoteScreen(
                             }
                         }
                     }
-
                 }
 
                 Button(
@@ -197,8 +220,77 @@ fun NoteScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun dialogCreateNote(noteViewModel: NoteViewModel) {
+fun <T> SwipeToDeleteContainer(
+    item: T,
+    onDelete: (T) -> Unit,
+    animationDuration: Int = 500,
+    content: @Composable (T) -> Unit
+) {
+    var isRemoved by remember {
+        mutableStateOf(false)
+    }
+    val state = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                isRemoved = true
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = isRemoved) {
+        if(isRemoved) {
+            delay(animationDuration.toLong())
+            onDelete(item)
+        }
+    }
+
+    AnimatedVisibility(
+        visible = !isRemoved,
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = animationDuration),
+            shrinkTowards = Alignment.Top
+        ) + fadeOut()
+    ) {
+
+        SwipeToDismissBox(
+            state = state,
+            backgroundContent = {
+                DeleteBackground()
+            },
+            content = {
+                content(item)
+            },
+            enableDismissFromStartToEnd = true
+        )
+    }
+}
+
+@Composable
+fun DeleteBackground() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 10.dp)
+            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
+            .background(Color.Red),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = null,
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun DialogCreateNote(noteViewModel: NoteViewModel) {
     val title: String by noteViewModel.title.observeAsState(initial = "")
     val text: String by noteViewModel.text.observeAsState(initial = "")
     val presentTextNote: Boolean by noteViewModel.presentTextNote.observeAsState(initial = false)
@@ -237,7 +329,7 @@ fun dialogCreateNote(noteViewModel: NoteViewModel) {
                         },
                         ) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.Filled.ArrowBackIosNew,
                             contentDescription = null
                         )
                     }
@@ -323,14 +415,17 @@ fun dialogCreateNote(noteViewModel: NoteViewModel) {
 }
 
 @Composable
-fun noteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
+fun NoteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
     OutlinedCard (
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp),
+            .padding(
+                horizontal = 5.dp,
+                vertical = 5.dp
+            ),
         onClick = {
             fetchNoteById( note.id )
             Log.e("CLOCKE","CLICKED")
@@ -368,6 +463,6 @@ fun noteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
 
 @Preview
 @Composable
-fun previewL() {
+fun PreviewL() {
     NoteScreen( paddingValues = PaddingValues())
 }

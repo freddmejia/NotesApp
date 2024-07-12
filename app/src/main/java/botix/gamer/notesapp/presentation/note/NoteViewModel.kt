@@ -175,6 +175,21 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    fun deleteNoById(note: Note) = viewModelScope.launch {
+
+        val resulUpdateUseCase = noteUpdateUseCase.execute(
+            idNote = note.id,
+            title = note.title,
+            note = note.note,
+            status = "0"
+        )
+        resulUpdateUseCase?.let {
+            fetchNotesByUserId("1")
+        }
+    }
+
+
+
     fun onNoteChangeNewLine() {
         var tempText = _text.value
         tempText = tempText + "1212-=\r\n"
