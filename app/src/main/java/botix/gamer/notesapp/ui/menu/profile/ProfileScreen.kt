@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import botix.gamer.notesapp.R
+import botix.gamer.notesapp.data.model.SplashAuth
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 import botix.gamer.notesapp.presentation.account.UserViewModel
@@ -38,9 +39,8 @@ import botix.gamer.notesapp.ui.navigation.AccountMenu
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController,
     paddingValues: PaddingValues,
-    accountViewModel: AccountViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel,
     userViewModel: UserViewModel = hiltViewModel()
 ) {
 
@@ -129,9 +129,7 @@ fun ProfileScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    navController.navigate(AccountMenu.Login.name) {
-                        popUpTo(AccountMenu.MainMenu.name) { inclusive = false }
-                    }
+                    accountViewModel.logout()
                 }
             }
 

@@ -9,6 +9,7 @@ import botix.gamer.notesapp.domain.note.FetchNoteByUserUseCase
 import botix.gamer.notesapp.domain.note.NoteCreateUseCase
 import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
 import botix.gamer.notesapp.domain.user.LoginUseCase
+import botix.gamer.notesapp.domain.user.LogoutUseCase
 import botix.gamer.notesapp.domain.user.RegisterUseCase
 import botix.gamer.notesapp.domain.user.UpdateUserUseCase
 import dagger.Module
@@ -69,6 +70,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUpdateUserUseCase(userRepositoryImplementation: UserRepositoryImplementation) = UpdateUserUseCase(userRepositoryImplementation)
+
+
+    @Singleton
+    @Provides
+    fun provideLogoutUseCase(userRepositoryImplementation: UserRepositoryImplementation) = LogoutUseCase(userRepositoryImplementation)
     //
 
 

@@ -27,8 +27,8 @@
 
     <!-- ERROR MESSAGES -->
     <string name="invalid_email_or_password">Email or password invalid, try again.</string>
-    <string name="invalid_passwords">Fill form or passwords not same</string>
+    <string name="invalid_passwords">Fill form or email is not valid</string>
     <string name="forgot_password_screen">This available soon.</string>
     <string name="no_data">No data, create one note.</string>
-
+    <string name="short_password">Least 8 characters</string>
 </resources>

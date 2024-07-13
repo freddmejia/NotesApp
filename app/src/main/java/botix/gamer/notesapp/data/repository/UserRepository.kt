@@ -14,6 +14,7 @@ interface  UserRepository {
     suspend fun login(email: String, password: String): User?
     suspend fun register(name: String, email: String, password: String, rPassword: String): User?
     suspend fun updateUser(id: Int, name: String, email: String, password: String, rPassword: String): Boolean
+    suspend fun logout()
 }
 /*
 class UserRepository @Inject constructor(

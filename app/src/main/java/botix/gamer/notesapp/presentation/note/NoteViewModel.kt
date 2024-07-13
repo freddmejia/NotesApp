@@ -66,13 +66,13 @@ class NoteViewModel @Inject constructor(
     }
 
     fun resetValues() {
-        if (_resultNoteRecover.value != null) {
+        //if (_resultNoteRecover.value != null) {
             _title.value = ""
             _text.value = ""
             _resultNoteRecover.value = null
             _presentTextNote.value = false
             _canSaveNote.value = false
-        }
+       // }
         _resultNote.value = Result.Empty
     }
 

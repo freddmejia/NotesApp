@@ -30,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +54,7 @@ import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
+import botix.gamer.notesapp.utils.Utility
 
 @Composable
 fun LoginScreen(
@@ -89,8 +89,8 @@ fun LoginForm(modifier: Modifier, accountViewModel: AccountViewModel, registerOn
     val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
 
 
-    accountViewModel.onEmailChanged(email = "joselu@gmai1l.com")
-    accountViewModel.onPasswordChanged(password = "123456718")
+    //accountViewModel.onEmailChanged(email = "joselu@gmai1l.com")
+    //accountViewModel.onPasswordChanged(password = "123456718")
     //accountViewModel.isLoggedUser2()
     Column(
         modifier = modifier
@@ -136,7 +136,6 @@ fun LoginForm(modifier: Modifier, accountViewModel: AccountViewModel, registerOn
                 buttonColors = ButtonDefaults.buttonColors()
             ) {
                 accountViewModel.launchLogin()
-                //accountViewModel.launchRegister(isNewUser = true)
             }
             Spacer(modifier = Modifier.padding(20.dp))
 
@@ -167,7 +166,6 @@ fun PlaceHolderImage(modifier: Modifier) {
         contentScale = ContentScale.Fit
     )
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailField(email: String, onTextFieldChange: (String) -> Unit) {
     TextField(
@@ -184,26 +182,28 @@ fun EmailField(email: String, onTextFieldChange: (String) -> Unit) {
         maxLines = 1,
     )
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordField(password: String, onTextFieldChange: (String) -> Unit) {
     var passwordFieldVisible by rememberSaveable {
         mutableStateOf(false)
     }
+    var shortPassword by rememberSaveable { mutableStateOf(false) }
 
     TextField(
         value = password,
-        onValueChange = { onTextFieldChange(it) },
+        onValueChange = {
+            onTextFieldChange(it)
+            //improve this so that it captures from a function, not from a variable
+            shortPassword = it.length < Utility.requiredPasswordLength
+                        },
         modifier = Modifier
             .fillMaxWidth(),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
-        placeholder = { Text(text =  stringResource(id = R.string.write_password)) },
         singleLine = true,
         maxLines = 1,
-        //colors = TextFieldDefaults.colors(),
         visualTransformation = if (passwordFieldVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '*'),
         trailingIcon = {
             val image = if (passwordFieldVisible)
@@ -214,7 +214,16 @@ fun PasswordField(password: String, onTextFieldChange: (String) -> Unit) {
             IconButton(onClick = {passwordFieldVisible = !passwordFieldVisible}) {
                 Icon(imageVector = image, contentDescription = description)
             }
-        }
+        },
+        label = {
+            if (shortPassword) {
+                Text(text = stringResource(id = R.string.short_password))
+            }
+            else {
+                Text(text =  stringResource(id = R.string.write_password))
+            }
+        },
+        isError = shortPassword
 
     )
 }
@@ -253,26 +262,3 @@ fun NewUserText(registerOnClicked: () -> Unit) {
         }
     )
 }
-/*
-@Preview
-@Composable
-fun SeeLogin() {
-    LoginScreen(
-        accountViewModel = AccountViewModel(
-            loginUseCase = LoginUseCase(
-                userRepositoryImplementation = UserRepositoryImplementation(
-                    adminApolloClient = AdminApolloClient(),
-                    adminSharedPreference = AdminSharedPreference(
-                        appContext =
-                    )
-                )
-            )
-        ),
-        forgotPassOnClicked = {
-            //
-        },
-        registerOnClicked = {
-            //
-        }
-    )
-}*/

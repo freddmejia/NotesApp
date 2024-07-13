@@ -8,7 +8,9 @@ import botix.gamer.notesapp.R
 import botix.gamer.notesapp.data.model.User
 
 class Utility {
+
     companion object{
+        const  val requiredPasswordLength = 8
         fun <T> errorResult(message: String,errorBody: ResponseBody? = null): Result<T> {
             //Timber.d(message)
             var mess_d = message

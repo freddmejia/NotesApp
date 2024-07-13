@@ -7,12 +7,18 @@ import androidx.activity.viewModels
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import botix.gamer.notesapp.data.model.SplashAuth
 import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.ui.navigation.NoteAppScreenMenu
-import botix.gamer.notesapp.ui.navigation.NoteAppScreenMenuV2
+import botix.gamer.notesapp.ui.account.AccountScreenV2
+import botix.gamer.notesapp.ui.navigation.MainScreenV2
+import botix.gamer.notesapp.ui.navigation.SplashScreenV2
 import botix.gamer.notesapp.utils.CompositionObj
 
 @AndroidEntryPoint
@@ -21,51 +27,41 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
         setContent {
-
-
-
-            //NoteScreen(noteViewModel = noteViewModel)
-            val navController = rememberNavController()
-            val navBarController = rememberNavController()
-            val navAccountController = rememberNavController()
-            //val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = botix.gamer.notesapp.utils.Result.Empty)
-            /*MaterialTheme{
-                Surface {
-                    MyApp()
-                }
-            }*/
-
-            NoteAppScreenMenuV2(
-                navController = navController,
-                navBarController = navBarController,
-                accountViewModel = accountViewModel,
+            loginPlatform(
+                //accountViewModel = accountViewModel
             )
-
-            /*when(resultLogin) {
-                is Result.Success -> {
-                    MainScreen(navController = navController)
-                }
-                else  -> {
-                    AccountScreen(
-                        accountViewModel = accountViewModel
-                    )
-                    /*LoginScreen(
-                        accountViewModel = AccountViewModel(),
-                        forgotPassOnClicked = {
-                            //
-                        },
-                        registerOnClicked = {
-                            //
-                        }
-                    )*/
-                }
-            }*/
-
-
         }
     }
 }
 
+@Composable
+fun loginPlatform(accountViewModel: AccountViewModel = hiltViewModel()) {
+    val navBarController = rememberNavController()
+    val navAccountController = rememberNavController()
+    val resulSplashAuth: SplashAuth by accountViewModel.resulSplashAuth.collectAsState(initial = SplashAuth.Splash)
+
+    LaunchedEffect(true) {
+        accountViewModel.splashLogin()
+    }
+
+    when(resulSplashAuth) {
+        SplashAuth.Splash -> {
+            SplashScreenV2()
+        }
+
+        SplashAuth.Login -> {
+            AccountScreenV2(
+                navAccountController = navAccountController,
+                accountViewModel = accountViewModel
+            )
+        }
+
+        SplashAuth.Menu -> {
+            MainScreenV2(
+                navBarController = navBarController,
+                accountViewModel = accountViewModel
+            )
+        }
+    }
+}

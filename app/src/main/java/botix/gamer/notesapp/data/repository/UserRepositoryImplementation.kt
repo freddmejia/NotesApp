@@ -132,6 +132,16 @@ class UserRepositoryImplementation @Inject constructor(
         }
     }
 
+    override suspend fun logout() {
+        with(adminSharedPreference.getSharedPreferences()?.edit()) {
+            this?.putString("user", "")
+            this?.putString("tokenPayload", "")
+            this?.putBoolean("userIsLogged", false)
+            this?.putString("accessToken", "")
+            this?.apply()
+        }
+    }
+
     fun userLogged(): Boolean {
         var isLogged = false
         try {
@@ -156,9 +166,9 @@ class UserRepositoryImplementation @Inject constructor(
         jsonTokenPayload.put("tokenType",tokenPayload.tokenType)
 
         with(adminSharedPreference.getSharedPreferences()?.edit()){
-            this?.putString("tokenPayload",jsonTokenPayload.toString())
-            this?.putBoolean("userIsLogged",true)
-            this?.putString("accessToken",accessToken)
+            this?.putString("tokenPayload", jsonTokenPayload.toString())
+            this?.putBoolean("userIsLogged", true)
+            this?.putString("accessToken", accessToken)
             this?.apply()
         }
     }

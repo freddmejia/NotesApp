@@ -46,6 +46,7 @@ import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
+import botix.gamer.notesapp.utils.Utility
 
 @Composable
 fun RegisterScreen(
@@ -76,6 +77,13 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
     val loading: Boolean by accountViewModel.loading.observeAsState(initial = false)
 
     val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
+    val canCreateAccount: Boolean by accountViewModel.canCreateAccount.collectAsState(initial = false)
+
+    /*
+    accountViewModel.onNameChanged(name = "joselu@gmai1l.com")
+    accountViewModel.onEmailChanged(email = "")
+    accountViewModel.onPasswordChanged(password = "12121212121")
+    accountViewModel.onRPasswordChanged(rPassword = "12121212121")*/
 
     Column(
         modifier = modifier
@@ -86,6 +94,7 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
 
         if (resultLogin is Result.Error) {
             Toast.makeText(LocalContext.current, R.string.invalid_passwords, Toast.LENGTH_SHORT).show()
+            accountViewModel.resetResultLogin()
         }
 
         if (loading) {
@@ -135,12 +144,14 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
                 }
             )
             Spacer(modifier = Modifier.padding(20.dp))
-            SimpleButtonLogin(
-                text = stringResource(id = R.string.register_button),
-                buttonColors = ButtonDefaults.buttonColors()
-            ) {
-                accountViewModel.launchRegister()
-                //accountViewModel.launchRegister(isNewUser = true)
+            if (canCreateAccount) {
+                SimpleButtonLogin(
+                    text = stringResource(id = R.string.register_button),
+                    buttonColors = ButtonDefaults.buttonColors()
+                ) {
+                    accountViewModel.launchRegister()
+                    //accountViewModel.launchRegister(isNewUser = true)
+                }
             }
         }
     }
@@ -172,20 +183,23 @@ fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
     var passwordFieldVisible by rememberSaveable {
         mutableStateOf(false)
     }
+    var shortPassword by rememberSaveable { mutableStateOf(false) }
 
     TextField(
         value = password,
-        onValueChange = { onTextFieldChange(it) },
+        onValueChange = {
+            onTextFieldChange(it)
+            //improve this so that it captures from a function, not from a variable
+            shortPassword = it.length < Utility.requiredPasswordLength
+                        },
         modifier = Modifier
             .fillMaxWidth(),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
-        placeholder = { Text(text =  stringResource(id = R.string.rewrite_password)) },
         singleLine = true,
         maxLines = 1,
-        //colors = TextFieldDefaults.colors(),
         visualTransformation = if (passwordFieldVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '*'),
         trailingIcon = {
             val image = if (passwordFieldVisible)
@@ -196,20 +210,15 @@ fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
             IconButton(onClick = {passwordFieldVisible = !passwordFieldVisible}) {
                 Icon(imageVector = image, contentDescription = description)
             }
-        }
-
+        },
+        label = {
+            if (shortPassword) {
+                Text(text = stringResource(id = R.string.short_password))
+            }
+            else {
+                Text(text =  stringResource(id = R.string.write_password))
+            }
+        },
+        isError = shortPassword
     )
 }
-
-/*
-@Preview
-@Composable
-fun SeeRegister() {
-    RegisterScreen(accountViewModel = AccountViewModel(
-        loginUseCase = LoginUseCase(
-            userRepositoryImplementation = UserRepositoryImplementation(
-                adminApolloClient = AdminApolloClient()
-            )
-        )
-    ))
-}*/

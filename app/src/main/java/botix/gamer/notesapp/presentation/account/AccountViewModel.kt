@@ -1,23 +1,24 @@
 package botix.gamer.notesapp.presentation.account
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import botix.gamer.notesapp.data.model.SplashAuth
 import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.di.TokenManager
 import botix.gamer.notesapp.domain.user.LoginUseCase
+import botix.gamer.notesapp.domain.user.LogoutUseCase
 import botix.gamer.notesapp.domain.user.RegisterUseCase
 import botix.gamer.notesapp.domain.user.UpdateUserUseCase
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
+import botix.gamer.notesapp.utils.Utility
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +26,7 @@ class AccountViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    tokenManager: TokenManager
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
@@ -42,12 +43,6 @@ class AccountViewModel @Inject constructor(
     private val _isUpdateAccount = MutableLiveData<Boolean>()
     val isUpdateAccount: LiveData<Boolean> = _isUpdateAccount
 
-    private val _isAuthenticated = MutableLiveData<Boolean>()
-    val isAuthenticated: LiveData<Boolean> = _isAuthenticated
-
-    private val _resultLogin = MutableStateFlow<Result<CompositionObj<User, String>>>(Result.Empty)
-    val resultLogin: StateFlow<Result<CompositionObj<User, String>>> = _resultLogin
-
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
 
@@ -56,16 +51,27 @@ class AccountViewModel @Inject constructor(
     )
     val resulSplashAuth: StateFlow<SplashAuth> = _resulSplashAuth
 
+    private val _resultLogin = MutableStateFlow<Result<CompositionObj<User, String>>>(Result.Empty)
+    val resultLogin: StateFlow<Result<CompositionObj<User, String>>> = _resultLogin
+
+
+    private val _canCreateAccount = MutableStateFlow(false)
+    val canCreateAccount: StateFlow<Boolean> = _canCreateAccount
+    fun resetResultLogin() {
+        _resultLogin.value = Result.Empty
+    }
+
+    fun resetFormVars() {
+        _name.value = ""
+        _email.value = ""
+        _password.value = ""
+        _rPassword.value = ""
+
+    }
+
     fun resetIsUpdateAccount() {
         _isUpdateAccount.value = false
     }
-    fun onLoginChange(email: String, password: String) {
-        _email.value = email
-        _password.value = password
-    }
-
-    fun isLoggedUser2() = isAuthenticated
-
     fun splashLogin() = viewModelScope.launch {
         _resulSplashAuth.value = SplashAuth.Splash
         val isLogged = loginUseCase.userLogged()
@@ -77,51 +83,11 @@ class AccountViewModel @Inject constructor(
             _resulSplashAuth.value = SplashAuth.Login
         }
     }
-    fun setState() {
-
+    private fun setState(state: SplashAuth) {
+        _resulSplashAuth.value = state
     }
 
-    fun resetResultLogin() {
-        _resultLogin.value = Result.Empty
-    }
-    fun isLoggedUser() {
-        _isAuthenticated.value = false
-        _resultLogin.value = Result.Empty
-        val isLogged = loginUseCase.userLogged()
-        if ( !isLogged )
-            return
-        _resultLogin.value = Result.Success(
-            CompositionObj(User(), "")
-        )
-        _isAuthenticated.value = true
-        Log.e("", "launchLogin isLoggedUser viewmodel: "+loginUseCase.userLogged().toString() )
-    }
-
-    fun launchLogin2() = viewModelScope.launch {
-        _isAuthenticated.value = false
-        _resultLogin.value = Result.Empty
-        _loading.value = true
-        val login = loginUseCase.execute(
-            email = _email.value.toString(),
-            password = _password.value.toString()
-        )
-        login?.let {
-            _resultLogin.value = Result.Success(
-                CompositionObj(it, "")
-            )
-            //_isAuthenticated.value = true
-        }?: run {
-            //_isAuthenticated.value = false
-            _resultLogin.value = Result.Error("")
-        }
-        _resultLogin.value = Result.Success(
-            CompositionObj(User(), "")
-        )
-        _loading.value = false
-        _isAuthenticated.value = true
-    }
     fun launchLogin() = viewModelScope.launch {
-        _isAuthenticated.value = false
         _resultLogin.value = Result.Empty
         _loading.value = true
         val login = loginUseCase.execute(
@@ -132,32 +98,41 @@ class AccountViewModel @Inject constructor(
             _resultLogin.value = Result.Success(
                 CompositionObj(it, "")
             )
-            _isAuthenticated.value = true
+            setState(
+                state = SplashAuth.Menu
+            )
+            resetFormVars()
         }?: run {
-            _isAuthenticated.value = false
             _resultLogin.value = Result.Error("")
+            setState(
+                state = SplashAuth.Login
+            )
         }
         _loading.value = false
     }
 
     fun launchRegister() = viewModelScope.launch {
-        _isAuthenticated.value = false
         _resultLogin.value = Result.Empty
         _loading.value = true
-        val login = registerUseCase.execute(
+        val register = registerUseCase.execute(
             name = _name.value.toString(),
             email = _email.value.toString(),
             password = _password.value.toString(),
             rPassword = _rPassword.value.toString()
         )
-        login?.let {
+        register?.let {
             _resultLogin.value = Result.Success(
                 CompositionObj(it, "")
             )
-            _isAuthenticated.value = true
+            setState(
+                state = SplashAuth.Menu
+            )
+            resetFormVars()
         }?: run {
-            _isAuthenticated.value = false
             _resultLogin.value = Result.Error("")
+            setState(
+                state = SplashAuth.Login
+            )
         }
         _loading.value = false
     }
@@ -174,17 +149,63 @@ class AccountViewModel @Inject constructor(
 
         _loading.value = false
     }
+
+    fun logout() = viewModelScope.launch {
+        _loading.value = true
+        logoutUseCase.execute()
+        delay(2000)
+        setState(state = SplashAuth.Login)
+        _loading.value = false
+
+    }
     fun onNameChanged(name: String) {
         _name.value = name
+        registerEnableButton()
     }
     fun onEmailChanged(email: String) {
         _email.value = email
+        registerEnableButton()
     }
     fun onPasswordChanged(password: String) {
         _password.value = password
+        registerEnableButton()
     }
     fun onRPasswordChanged(rPassword: String) {
         _rPassword.value = rPassword
+        registerEnableButton()
+    }
+
+    private fun registerEnableButton() {
+        _canCreateAccount.value = false
+        val nameTemp = _name.value.toString()
+        val emailTemp = _email.value.toString()
+        val passwordTemp = _password.value.toString()
+        val rPasswordTemp = _rPassword.value.toString()
+
+        if (nameTemp.replace("\\s".toRegex(), "").isEmpty())
+            return
+        if (emailTemp.replace("\\s".toRegex(), "").isEmpty())
+            return
+        if (passwordTemp.replace("\\s".toRegex(), "").isEmpty())
+            return
+        if (rPasswordTemp.replace("\\s".toRegex(), "").isEmpty())
+            return
+
+        if (passwordTemp != rPasswordTemp)
+            return
+
+        if (passwordTemp.length < Utility.requiredPasswordLength)
+            return
+
+        /*if (isValidEmail(email = emailTemp))
+            return*/
+        _canCreateAccount.value = true
+    }
+
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+        val pattern = Pattern.compile(emailRegex)
+        return pattern.matcher(email).matches()
     }
 
 }
