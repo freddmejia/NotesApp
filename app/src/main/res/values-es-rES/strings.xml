@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Note app</string>
+    <string name="write_name">Escribe tu nombre</string>
+    <string name="write_email">Escribe tu correo electrónico</string>
+    <string name="write_password">Escribe tu contraseña</string>
+    <string name="rewrite_password">Vuelve a escribir tu contraseña</string>
+
+    <string name="shared_preferences">data</string>
+    <!-- BUTTONS -->
+    <string name="btn_cancel">CANCELAR</string>
+    <string name="btn_save">GUARDAR</string>
+    <string name="btn_ok">OK</string>
+    <string name="login_button">Ingresar</string>
+    <string name="register_button">Registrarte</string>
+    <string name="update_button">Actualizar</string>
+    <string name="close_session">Cerrar sessión</string>
+    <string name="forgot_password">Olvidé mi contraseña</string>
+    <string name="new_user">Soy nuevo?</string>
+    <!-- TITLES -->
+    <string name="create_note">Crear nota</string>
+    <string name="login">Ingresar</string>
+    <string name="register">Registrarme</string>
+
+    <string name="main_menu">Main</string>
+    <string name="splash_menu">Splash</string>
+    <string name="account_menu">Login</string>
+
+    <!-- ERROR MESSAGES -->
+    <string name="invalid_email_or_password">Email o contraseña inválidos, prueba de nuevo.</string>
+    <string name="invalid_passwords">Rellena el formulario o el correo electrónico no es válido.</string>
+    <string name="forgot_password_screen">Disponible pronto.</string>
+    <string name="no_data">No hay notas, crea una.</string>
+    <string name="short_password">Al menos 8 caracteres.</string>
+
+    <!-- PLACEHOLDERS -->
+    <string name="write_title_note">Escribe un título</string>
+    <string name="write_note">Escribe una nota</string>
+</resources>

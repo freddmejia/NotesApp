@@ -364,7 +364,39 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
 
                 }
 
-                BasicTextField(
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    BasicTextField(
+                        value = title,
+                        onValueChange = {
+                            noteViewModel.onNoteChange(
+                                title = it,
+                                text = text
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp
+                        )
+                    )
+                    if (title.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.write_title_note),
+                            style = TextStyle(fontSize = 18.sp, color = Color.Gray),
+                            modifier = Modifier.align(Alignment.CenterStart)
+                                .padding(horizontal = 20.dp),
+                        )
+                    }
+                }
+
+                /*BasicTextField(
                     value = title,
                     onValueChange = {
                         noteViewModel.onNoteChange(
@@ -384,30 +416,43 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
                     )
-                )
+                )*/
 
                 if (presentTextNote) {
-                    BasicTextField(
-                        value = text,
-                        onValueChange = {
-                            noteViewModel.onNoteChange(
-                                title = title,
-                                text = it
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        BasicTextField(
+                            value = text,
+                            onValueChange = {
+                                noteViewModel.onNoteChange(
+                                    title = title,
+                                    text = it
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            textStyle = TextStyle(
+                                color = Color.Black,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 15.sp
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Default
+                            ),
+                        )
+
+                        if (text.isEmpty()) {
+                            Text(
+                                text = stringResource(id = R.string.write_note),
+                                style = TextStyle(fontSize = 18.sp, color = Color.Gray),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 20.dp),
                             )
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        textStyle = TextStyle(
-                            color = Color.Black,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 15.sp
-                        ),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Default
-                        ),
-                    )
+                        }
+
+                    }
                 }
             }
         }
