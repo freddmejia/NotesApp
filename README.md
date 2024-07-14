@@ -1,4 +1,3 @@
-NotesApp
 NotesApp is an Android application built using Clean Architecture, the Repository Pattern, Dependency Injection, and Apollo Client with GraphQL for data management. Developed in Kotlin with Jetpack Compose for a modern UI.
 
 Features
