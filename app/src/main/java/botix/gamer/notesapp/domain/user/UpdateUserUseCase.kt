@@ -19,5 +19,4 @@ class UpdateUserUseCase @Inject constructor(
             rPassword = rPassword
         )
     }
-
 }

@@ -1,9 +1,6 @@
 package botix.gamer.notesapp.di
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
-import botix.gamer.notesapp.R
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.utils.Hosts
 import com.apollographql.apollo3.ApolloClient
@@ -19,7 +16,6 @@ import javax.inject.Singleton
 
 class AdminApolloClient @Inject constructor(private val okHttpClient: OkHttpClient){
     fun getApolloClient(): ApolloClient {
-        //val okHttpClient = OkHttpClient.Builder().build()
         Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
 
         return ApolloClient.Builder()

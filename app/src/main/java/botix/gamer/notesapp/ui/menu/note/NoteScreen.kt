@@ -1,7 +1,6 @@
 package botix.gamer.notesapp.ui.menu.note
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -75,6 +74,7 @@ import botix.gamer.notesapp.presentation.note.NoteViewModel
 import botix.gamer.notesapp.R
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
+import botix.gamer.notesapp.utils.Utility
 import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
@@ -99,7 +99,7 @@ fun NoteScreen(
     LaunchedEffect(true) {
         if (userId > 0) {
             noteViewModel.fetchNotesByUserId(
-                status = "1"
+                status = Utility.statusActive()
             )
         }
     }
@@ -107,7 +107,7 @@ fun NoteScreen(
     if (resultNote is Result.Success) {
         Toast.makeText(LocalContext.current, "Note created", Toast.LENGTH_SHORT).show()
         noteViewModel.fetchNotesByUserId(
-            status = "1"
+            status = Utility.statusActive()
         )
         noteViewModel.resetValues()
     }
@@ -395,29 +395,6 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
                         )
                     }
                 }
-
-                /*BasicTextField(
-                    value = title,
-                    onValueChange = {
-                        noteViewModel.onNoteChange(
-                            title = it,
-                            text = text
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp
-                    )
-                )*/
-
                 if (presentTextNote) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         BasicTextField(
@@ -473,7 +450,6 @@ fun NoteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
             ),
         onClick = {
             fetchNoteById( note.id )
-            Log.e("CLOCKE","CLICKED")
         }
 
     ){

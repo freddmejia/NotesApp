@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,11 +78,6 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
     val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
     val canCreateAccount: Boolean by accountViewModel.canCreateAccount.collectAsState(initial = false)
 
-    /*
-    accountViewModel.onNameChanged(name = "joselu@gmai1l.com")
-    accountViewModel.onEmailChanged(email = "")
-    accountViewModel.onPasswordChanged(password = "12121212121")
-    accountViewModel.onRPasswordChanged(rPassword = "12121212121")*/
 
     Column(
         modifier = modifier
@@ -103,7 +97,6 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
                     .width(64.dp)
                     .align(Alignment.CenterHorizontally),
                 color = MaterialTheme.colorScheme.secondary,
-                //trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
         else {
@@ -150,14 +143,12 @@ fun RegisterForm(modifier: Modifier, accountViewModel: AccountViewModel) {
                     buttonColors = ButtonDefaults.buttonColors()
                 ) {
                     accountViewModel.launchRegister()
-                    //accountViewModel.launchRegister(isNewUser = true)
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameField(name: String, onTextFieldChange: (String) -> Unit) {
     TextField(
@@ -172,12 +163,9 @@ fun NameField(name: String, onTextFieldChange: (String) -> Unit) {
         placeholder = { Text(text =  stringResource(id = R.string.write_name)) },
         singleLine = true,
         maxLines = 1,
-        /*colors = TextFieldDefaults.colors(
-        )*/
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RPasswordField(password: String, onTextFieldChange: (String) -> Unit) {
     var passwordFieldVisible by rememberSaveable {

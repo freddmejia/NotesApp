@@ -26,16 +26,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import botix.gamer.notesapp.R
-import botix.gamer.notesapp.data.model.SplashAuth
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.presentation.account.AccountViewModel
 import botix.gamer.notesapp.presentation.account.UserViewModel
 import botix.gamer.notesapp.ui.account.NameField
 import botix.gamer.notesapp.ui.account.PasswordField
 import botix.gamer.notesapp.ui.account.SimpleButtonLogin
-import botix.gamer.notesapp.ui.navigation.AccountMenu
 
 @Composable
 fun ProfileScreen(

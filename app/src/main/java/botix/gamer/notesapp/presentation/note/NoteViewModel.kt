@@ -11,6 +11,7 @@ import botix.gamer.notesapp.domain.note.NoteCreateUseCase
 import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
 import botix.gamer.notesapp.utils.CompositionObj
 import botix.gamer.notesapp.utils.Result
+import botix.gamer.notesapp.utils.Utility
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -100,7 +101,7 @@ class NoteViewModel @Inject constructor(
         val createNoteResponse = noteCreateUseCase.execute(
             title = _title.value.toString(),
             note = _text.value.toString(),
-            status = "1",
+            status = Utility.statusActive(),
             userId = _userId.value!!.toInt()
         )
 
@@ -121,7 +122,7 @@ class NoteViewModel @Inject constructor(
         val createNoteResponse = noteUpdateUseCase.execute(
             title = _title.value.toString(),
             note = _text.value.toString(),
-            status = "1",
+            status = Utility.statusActive(),
             idNote = _resultNoteRecover.value!!.id
         )
 
@@ -184,7 +185,7 @@ class NoteViewModel @Inject constructor(
             status = "0"
         )
         resulUpdateUseCase?.let {
-            fetchNotesByUserId("1")
+            fetchNotesByUserId(Utility.statusActive())
         }
     }
 

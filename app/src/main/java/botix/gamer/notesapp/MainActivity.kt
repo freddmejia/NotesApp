@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             loginPlatform(
-                //accountViewModel = accountViewModel
             )
         }
     }
