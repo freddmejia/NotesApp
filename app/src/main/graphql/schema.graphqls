@@ -318,6 +318,8 @@ input NoteInput {
   note: String!
 
   status: String!
+
+  created_at: String!
 }
 
 input NoteUpdateInput {
@@ -328,6 +330,8 @@ input NoteUpdateInput {
   note: String!
 
   status: String!
+
+  created_at: String!
 }
 
 input NewPasswordWithCodInput {
