@@ -53,7 +53,7 @@ class Utility {
             return formatter.format(this)
         }*/
 
-        fun parseDateTimeUtc(dateTimeUtc: String, format: String): String {
+        fun parseDateTimeUtcToLocalTime(dateTimeUtc: String, format: String): String {
             val datetime = DateTimeFormatter.ofPattern(format)
                 .withZone(ZoneOffset.UTC)
                 .parse(dateTimeUtc)

@@ -90,7 +90,7 @@ fun LoginForm(modifier: Modifier, accountViewModel: AccountViewModel, registerOn
 
 
     accountViewModel.onEmailChanged(email = "joselu@gmai1l.com")
-    accountViewModel.onPasswordChanged(password = "123456718")
+    accountViewModel.onPasswordChanged(password = "1234567181")
     //accountViewModel.isLoggedUser2()
     Column(
         modifier = modifier

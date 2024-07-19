@@ -19,4 +19,8 @@ class NoteUpdateUseCase @Inject constructor(
     suspend fun executeUpdate(note: Note) {
         noteRepositoryImplementation.updateNoteLocal(note = note)
     }
+
+    suspend fun executeDeleteNote(note: Note){
+        noteRepositoryImplementation.deleteNoteLocal(note = note)
+    }
 }

@@ -1,6 +1,7 @@
 package botix.gamer.notesapp.presentation.note
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
@@ -135,7 +137,7 @@ class NoteViewModel @Inject constructor(
     private fun addNewNoteToList(note: Note) = viewModelScope.launch {
         var noteTemp = note.copy()
         var tempList = _listNotes.value
-        noteTemp.createdAt = Utility.parseDateTimeUtc(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
+        noteTemp.createdAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
         tempList.add(0, noteTemp)
 
         _listNotes.value = tempList
@@ -148,10 +150,12 @@ class NoteViewModel @Inject constructor(
     private fun updateListNote(note: Note) = viewModelScope.launch {
         var noteTemp = note.copy()          //UTC
         var tempList = _listNotes.value     //LOCALTIME
+
+        noteTemp.createdAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
+
         if (tempList.isNotEmpty()) {
             tempList.mapIndexed{ index, item ->
-                noteTemp.createdAt = Utility.parseDateTimeLocalToUtc(dateTimeLocal = note.createdAt, format = Utility.format)
-                if (noteTemp.createdAt == item.createdAt) {
+                if (noteTemp.createdAt.equals(item.createdAt)) {
                     tempList.set(index = index, noteTemp)
                 }
             }
@@ -186,10 +190,35 @@ class NoteViewModel @Inject constructor(
 
 
     fun fetchNotesByUserId(status: String) = viewModelScope.launch {
-        /*_resultListNotes.value = Result.Empty
-        var listNotes = fetchNoteByUserUseCase.executeFetchNotesLocal()
+        _loading.value = true
+        _resultListNotes.value = Result.Empty
+        var fetchLocalListNotes = fetchNoteByUserUseCase.executeFetchNotesLocal()
 
-        if (listNotes.isEmpty()) {
+        if (fetchLocalListNotes.isNotEmpty()) {
+            fetchLocalListNotes.forEach { note ->
+                addNewNoteToList(note = note)
+            }
+        }
+        else {
+            val fetchNotesResponse = fetchNoteByUserUseCase.execute(
+                status = status,
+                userId = _userId.value!!.toInt()
+            )
+
+            fetchNotesResponse.let { listNotes->
+                if (listNotes.isNotEmpty()) {
+                    listNotes.forEach { note ->
+                        addNewNoteToList(note = note)
+                        noteCreateUseCase.executeLocal(note = note)
+                    }
+                }
+                else {
+                    _resultListNotes.value = Result.Error("")
+                }
+            }
+        }
+        _loading.value = false
+        /*if (listNotes.isEmpty()) {
             _loading.value = true
             val fetchNoteResponse = fetchNoteByUserUseCase.execute(
                 status = status,
@@ -225,7 +254,7 @@ class NoteViewModel @Inject constructor(
     }
 
     fun fetchLocalListNoteById(noteId: Int) {
-        /*_resultNoteRecover.value = null
+        _resultNoteRecover.value = null
         val listTemp = _resultListNotes.value
         if (listTemp is Result.Success){
             listTemp.data.data.map { noteItem->
@@ -241,10 +270,12 @@ class NoteViewModel @Inject constructor(
                     return@map
                 }
             }
-        }*/
+        }
     }
 
     fun deleteNoById(note: Note) = viewModelScope.launch {
+
+        noteUpdateUseCase.executeDeleteNote(note = note)
 
         val resulUpdateUseCase = noteUpdateUseCase.execute(
             idNote = note.id,

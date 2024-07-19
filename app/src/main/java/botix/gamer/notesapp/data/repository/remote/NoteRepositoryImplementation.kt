@@ -27,9 +27,10 @@ class NoteRepositoryImplementation @Inject constructor(
                 .mutation(
                     RegisterNoteMutation(
                         title = title,
-                         note = note,
-                         status = status,
-                         user_id = userId
+                        note = note,
+                        status = status,
+                        user_id = userId,
+                        created_at = createdAt
                     )
                 ).execute()
 
@@ -64,7 +65,8 @@ class NoteRepositoryImplementation @Inject constructor(
                         id = idNote.toString(),
                         title = title,
                         note = note,
-                        status = status
+                        status = status,
+                        created_at = ""
                     )
                 ).execute()
 
@@ -139,6 +141,12 @@ class NoteRepositoryImplementation @Inject constructor(
                 listNotes
             }
             return@withContext listNotes
+        }
+    }
+
+    override suspend fun deleteNoteLocal(note: Note) {
+        withContext(Dispatchers.IO) {
+            noteDao.deleteNote(noteId = note.id)
         }
     }
 

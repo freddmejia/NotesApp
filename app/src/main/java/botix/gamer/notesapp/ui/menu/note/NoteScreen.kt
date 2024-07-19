@@ -105,7 +105,7 @@ fun NoteScreen(
     val dateTimeUtc = Utility.getCurrentDateTimeUtc(Utility.format)
     Log.e("", "NoteScreen.datime: "+dateTimeUtc )
 
-    Log.e("", "NoteScreen:parse "+Utility.parseDateTimeUtc(dateTimeUtc = dateTimeUtc, format = Utility.format) )
+    Log.e("", "NoteScreen:parse "+Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = dateTimeUtc, format = Utility.format) )
     LaunchedEffect(true) {
         if (userId > 0) {
             noteViewModel.fetchNotesByUserId(

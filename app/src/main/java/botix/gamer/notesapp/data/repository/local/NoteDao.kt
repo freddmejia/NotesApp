@@ -15,8 +15,11 @@ interface NoteDao {
     @Query("update note set id = :id, updatedAt = :updatedAt where createdAt = :createdAt")
     fun updateNote(id: Int, updatedAt: String, createdAt: String)
 
-    @Query("select * from note order by createdAt DESC")
+    @Query("select * from note order by createdAt ASC")
     fun fetchNotesByStatus(): List<Note>
+
+    @Query("delete from note  where id = :noteId")
+    fun deleteNote(noteId: Int)
 
     /*@Query(update note set ti)
     fun createNote(note: Note)**/

@@ -1,9 +1,10 @@
-mutation registerNote($title: String!, $note: String!, $status: String!, $user_id: Int!) {
+mutation registerNote($title: String!, $note: String!, $status: String!, $user_id: Int!, $created_at: String!) {
     registerNote(input: {
         title: $title,
         note: $note,
         status: $status,
-        user_id: $user_id
+        user_id: $user_id,
+        created_at: $created_at
     }){
         id
         title

@@ -1,10 +1,10 @@
-mutation updateNote($id: ID!, $title: String!, $note: String!, $status: String!) {
+mutation updateNote($id: ID!, $title: String!, $note: String!, $status: String!, $created_at: String!) {
     updateNote(input: {
         id: $id,
         title: $title,
         note: $note,
         status: $status,
-
+        created_at: $created_at
     }){
         id
         title
