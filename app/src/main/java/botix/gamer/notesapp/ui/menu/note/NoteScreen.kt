@@ -1,7 +1,10 @@
 package botix.gamer.notesapp.ui.menu.note
 
 import android.annotation.SuppressLint
+import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -91,11 +94,18 @@ fun NoteScreen(
     val resultListNotes: Result<CompositionObj<ArrayList<Note>, String>> by noteViewModel.resultListNotes.collectAsState(
         initial = Result.Empty
     )
+
+    val listNotes: ArrayList<Note> by noteViewModel.listNotes.collectAsState(
+        initial = arrayListOf()
+    )
     val userId: Int by noteViewModel.userId.observeAsState(initial = 0)
     val loading: Boolean by noteViewModel.loading.observeAsState(initial = false)
 
 
+    val dateTimeUtc = Utility.getCurrentDateTimeUtc(Utility.format)
+    Log.e("", "NoteScreen.datime: "+dateTimeUtc )
 
+    Log.e("", "NoteScreen:parse "+Utility.parseDateTimeUtc(dateTimeUtc = dateTimeUtc, format = Utility.format) )
     LaunchedEffect(true) {
         if (userId > 0) {
             noteViewModel.fetchNotesByUserId(
@@ -390,7 +400,8 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
                         Text(
                             text = stringResource(id = R.string.write_title_note),
                             style = TextStyle(fontSize = 18.sp, color = Color.Gray),
-                            modifier = Modifier.align(Alignment.CenterStart)
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
                                 .padding(horizontal = 20.dp),
                         )
                     }

@@ -1,7 +1,7 @@
 package botix.gamer.notesapp.domain.user
 
 import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.data.reposuserLoginory.UserRepositoryImplementation
+import botix.gamer.notesapp.data.repository.remote.UserRepositoryImplementation
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(

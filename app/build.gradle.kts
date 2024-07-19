@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "botix.gamer.notesapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -105,6 +105,10 @@ dependencies {
     //apollo
     implementation("com.apollographql.apollo3:apollo-runtime:3.8.3")
 
+
+    //room
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 }
 kapt {
     correctErrorTypes = true

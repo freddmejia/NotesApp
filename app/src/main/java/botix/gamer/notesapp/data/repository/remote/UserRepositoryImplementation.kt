@@ -1,11 +1,10 @@
-package botix.gamer.notesapp.data.reposuserLoginory
+package botix.gamer.notesapp.data.repository.remote
 
 import botix.gamer.notesapp.LoginMutation
 import botix.gamer.notesapp.RegisterMutation
 import botix.gamer.notesapp.UpdatedUserMutation
 import botix.gamer.notesapp.data.model.TokenPayload
 import botix.gamer.notesapp.data.model.User
-import botix.gamer.notesapp.data.repository.UserRepository
 import botix.gamer.notesapp.di.AdminApolloClient
 import botix.gamer.notesapp.di.AdminSharedPreference
 import org.json.JSONObject

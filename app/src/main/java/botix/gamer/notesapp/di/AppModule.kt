@@ -3,8 +3,10 @@ package botix.gamer.notesapp.di
 import android.content.Context
 import android.content.SharedPreferences
 import botix.gamer.notesapp.R
-import botix.gamer.notesapp.data.repository.NoteRepositoryImplementation
-import botix.gamer.notesapp.data.reposuserLoginory.UserRepositoryImplementation
+import botix.gamer.notesapp.data.db.DataModelDatabase
+import botix.gamer.notesapp.data.repository.local.NoteDao
+import botix.gamer.notesapp.data.repository.remote.NoteRepositoryImplementation
+import botix.gamer.notesapp.data.repository.remote.UserRepositoryImplementation
 import botix.gamer.notesapp.domain.note.FetchNoteByUserUseCase
 import botix.gamer.notesapp.domain.note.NoteCreateUseCase
 import botix.gamer.notesapp.domain.note.NoteUpdateUseCase
@@ -81,7 +83,7 @@ object AppModule {
     //NOTE, CRUD
     @Singleton
     @Provides
-    fun provideNoteRepositoryImplementation(adminApolloClient: AdminApolloClient) = NoteRepositoryImplementation(adminApolloClient)
+    fun provideNoteRepositoryImplementation(adminApolloClient: AdminApolloClient, noteDao: NoteDao) = NoteRepositoryImplementation(adminApolloClient, noteDao)
 
 
     @Singleton
@@ -100,4 +102,14 @@ object AppModule {
 
 
     //
+
+    //local database
+    @Singleton
+    @Provides
+    fun provideDataModelDatabase(@ApplicationContext appContext: Context) = DataModelDatabase.getDatabase(appContext)
+
+
+    @Singleton
+    @Provides
+    fun provideNoteDao(db: DataModelDatabase) = db.noteDao()
 }

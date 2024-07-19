@@ -1,7 +1,7 @@
 package botix.gamer.notesapp.domain.note
 
 import botix.gamer.notesapp.data.model.Note
-import botix.gamer.notesapp.data.repository.NoteRepositoryImplementation
+import botix.gamer.notesapp.data.repository.remote.NoteRepositoryImplementation
 import javax.inject.Inject
 
 class NoteUpdateUseCase @Inject constructor(
@@ -14,5 +14,9 @@ class NoteUpdateUseCase @Inject constructor(
             note = note,
             status = status,
         )
+    }
+
+    suspend fun executeUpdate(note: Note) {
+        noteRepositoryImplementation.updateNoteLocal(note = note)
     }
 }

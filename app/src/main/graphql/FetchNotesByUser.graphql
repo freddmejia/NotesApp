@@ -15,6 +15,7 @@ query fetchNotesbyUserId($user_id: ID!, $status: String!) {
             note
             created_at
             updated_at
+            status
         }
     }
 }

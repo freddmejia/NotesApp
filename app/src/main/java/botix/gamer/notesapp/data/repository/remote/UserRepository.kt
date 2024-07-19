@@ -1,4 +1,4 @@
-package botix.gamer.notesapp.data.repository
+package botix.gamer.notesapp.data.repository.remote
 
 import botix.gamer.notesapp.LoginMutation
 import botix.gamer.notesapp.data.model.User

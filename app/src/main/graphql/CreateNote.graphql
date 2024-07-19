@@ -13,6 +13,6 @@ mutation registerNote($title: String!, $note: String!, $status: String!, $user_i
             name
         }
         updated_at
-        created_at
+        status
     }
 }

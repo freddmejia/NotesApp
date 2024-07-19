@@ -1,7 +1,7 @@
 package botix.gamer.notesapp.domain.note
 
 import botix.gamer.notesapp.data.model.Note
-import botix.gamer.notesapp.data.repository.NoteRepositoryImplementation
+import botix.gamer.notesapp.data.repository.remote.NoteRepositoryImplementation
 import javax.inject.Inject
 
 
@@ -12,5 +12,9 @@ class FetchNoteByUserUseCase @Inject constructor(
         return noteRepositoryImplementation.fechNotesByUserId(
             userId = userId, status = status
         )
+    }
+
+    suspend fun executeFetchNotesLocal(): ArrayList<Note>{
+        return noteRepositoryImplementation.fetchNotesLocal()
     }
 }

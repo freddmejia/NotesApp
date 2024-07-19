@@ -89,8 +89,8 @@ fun LoginForm(modifier: Modifier, accountViewModel: AccountViewModel, registerOn
     val resultLogin: Result<CompositionObj<User, String>> by accountViewModel.resultLogin.collectAsState(initial = Result.Empty)
 
 
-    //accountViewModel.onEmailChanged(email = "joselu@gmai1l.com")
-    //accountViewModel.onPasswordChanged(password = "123456718")
+    accountViewModel.onEmailChanged(email = "joselu@gmai1l.com")
+    accountViewModel.onPasswordChanged(password = "123456718")
     //accountViewModel.isLoggedUser2()
     Column(
         modifier = modifier
