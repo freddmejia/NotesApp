@@ -1,8 +1,5 @@
 package botix.gamer.notesapp.presentation.note
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
@@ -161,6 +157,8 @@ class NoteViewModel @Inject constructor(
             }
         }
 
+        _listNotes.value = tempList
+
         _resultListNotes.value  = Result.Success(
             CompositionObj(tempList, "")
         )
@@ -274,6 +272,7 @@ class NoteViewModel @Inject constructor(
     }
 
     fun deleteNoById(note: Note) = viewModelScope.launch {
+
 
         noteUpdateUseCase.executeDeleteNote(note = note)
 

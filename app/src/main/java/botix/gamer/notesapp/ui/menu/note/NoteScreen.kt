@@ -276,7 +276,8 @@ fun <T> SwipeToDeleteContainer(
             content = {
                 content(item)
             },
-            enableDismissFromStartToEnd = true
+            enableDismissFromStartToEnd = false,
+            enableDismissFromEndToStart = true
         )
     }
 }
