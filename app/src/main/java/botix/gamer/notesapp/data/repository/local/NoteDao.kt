@@ -12,14 +12,17 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun createNote(note: Note)
 
-    @Query("update note set id = :id, updatedAt = :updatedAt where createdAt = :createdAt")
-    fun updateNote(id: Int, updatedAt: String, createdAt: String)
+    @Query("update note set id = :id, updatedAt = :updatedAt, note = :note, title = :title where createdAt = :createdAt")
+    fun updateNote(id: Int, updatedAt: String, note: String, title: String, createdAt: String)
 
     @Query("select * from note order by createdAt ASC")
     fun fetchNotesByStatus(): List<Note>
 
     @Query("delete from note  where id = :noteId")
     fun deleteNote(noteId: Int)
+
+    @Query("select * from note where createdAt = :createdAt")
+    fun fecthNoteByCreatedAt(createdAt: String): Note
 
     /*@Query(update note set ti)
     fun createNote(note: Note)**/

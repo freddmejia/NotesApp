@@ -1,10 +1,7 @@
 package botix.gamer.notesapp.ui.menu.note
 
 import android.annotation.SuppressLint
-import android.os.Build
-import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -95,17 +92,9 @@ fun NoteScreen(
         initial = Result.Empty
     )
 
-    val listNotes: ArrayList<Note> by noteViewModel.listNotes.collectAsState(
-        initial = arrayListOf()
-    )
     val userId: Int by noteViewModel.userId.observeAsState(initial = 0)
     val loading: Boolean by noteViewModel.loading.observeAsState(initial = false)
 
-
-    val dateTimeUtc = Utility.getCurrentDateTimeUtc(Utility.format)
-    Log.e("", "NoteScreen.datime: "+dateTimeUtc )
-
-    Log.e("", "NoteScreen:parse "+Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = dateTimeUtc, format = Utility.format) )
     LaunchedEffect(true) {
         if (userId > 0) {
             noteViewModel.fetchNotesByUserId(
@@ -165,7 +154,7 @@ fun NoteScreen(
                             items(
                                 (resultListNotes as Result.Success<CompositionObj<ArrayList<Note>, String>>).data.data,
                                 key = {
-                                    it.id
+                                    it.createdAt
                                 }
                             ) { note ->
                                 SwipeToDeleteContainer(
@@ -357,7 +346,7 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
                     if (canSaveNote) {
                         TextButton(
                             onClick = {
-                                noteViewModel.handleDialogCreate(presentDialog = false)
+                                //noteViewModel.handleDialogCreate(presentDialog = false)
                                 if(resultNoteRecover != null) {
                                     noteViewModel.updateNote()
                                 }

@@ -8,8 +8,7 @@ class NoteCreateUseCase @Inject constructor(
     private val noteRepositoryImplementation: NoteRepositoryImplementation
 ) {
     suspend fun execute(note: Note, userId: Int): Note? {
-
-        executeLocal(note = note)
+        //executeLocal(note = note)
         return noteRepositoryImplementation.createNote(
             title = note.title,
             note = note.note,
@@ -19,9 +18,10 @@ class NoteCreateUseCase @Inject constructor(
         )
     }
 
-    suspend fun executeLocal(note: Note) {
+    suspend fun executeLocal(note: Note): Note? {
         noteRepositoryImplementation.createNoteLocal(
             note = note
         )
+        return noteRepositoryImplementation.fetchNoteByCreatedAt(createdAt = note.createdAt)
     }
 }

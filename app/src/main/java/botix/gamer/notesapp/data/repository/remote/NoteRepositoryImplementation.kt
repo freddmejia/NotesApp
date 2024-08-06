@@ -55,7 +55,8 @@ class NoteRepositoryImplementation @Inject constructor(
         idNote: Int,
         title: String,
         note: String,
-        status: String
+        status: String,
+        createdAt: String
     ): Note? {
         try {
             var noteObj : Note? = null
@@ -66,7 +67,7 @@ class NoteRepositoryImplementation @Inject constructor(
                         title = title,
                         note = note,
                         status = status,
-                        created_at = ""
+                        created_at = createdAt
                     )
                 ).execute()
 
@@ -128,7 +129,7 @@ class NoteRepositoryImplementation @Inject constructor(
 
     override suspend fun updateNoteLocal(note: Note) {
         withContext(Dispatchers.IO) {
-            noteDao.updateNote(id = note.id, updatedAt = note.updatedAt, createdAt = note.createdAt)
+            noteDao.updateNote(id = note.id, updatedAt = note.updatedAt, note = note.note, title = note.title, createdAt = note.createdAt)
         }
     }
 
@@ -147,6 +148,13 @@ class NoteRepositoryImplementation @Inject constructor(
     override suspend fun deleteNoteLocal(note: Note) {
         withContext(Dispatchers.IO) {
             noteDao.deleteNote(noteId = note.id)
+        }
+    }
+
+    override suspend fun fetchNoteByCreatedAt(createdAt: String): Note? {
+        return withContext(Dispatchers.IO){
+            val localNote = noteDao.fecthNoteByCreatedAt(createdAt = createdAt)
+            return@withContext localNote
         }
     }
 
