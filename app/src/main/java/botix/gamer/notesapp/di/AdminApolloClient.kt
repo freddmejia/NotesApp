@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import botix.gamer.notesapp.data.model.User
 import botix.gamer.notesapp.utils.Hosts
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.okHttpClient
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -22,6 +23,7 @@ class AdminApolloClient @Inject constructor(private val okHttpClient: OkHttpClie
             .serverUrl(Hosts.hostServer())
             .httpExposeErrorBody(true)
             .okHttpClient(okHttpClient)
+            .httpEngine(DefaultHttpEngine(timeoutMillis = 8_000))
             .build()
     }
 }

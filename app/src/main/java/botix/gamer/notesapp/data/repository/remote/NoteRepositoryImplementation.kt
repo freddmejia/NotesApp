@@ -137,7 +137,7 @@ class NoteRepositoryImplementation @Inject constructor(
         return withContext(Dispatchers.IO){
             var listNotes = arrayListOf<Note>()
             try {
-                listNotes = noteDao.fetchNotesByStatus() as ArrayList<Note>
+                listNotes = noteDao.fetchNotes() as ArrayList<Note>
             }catch (e: java.lang.Exception){
                 listNotes
             }
@@ -145,15 +145,22 @@ class NoteRepositoryImplementation @Inject constructor(
         }
     }
 
-    override suspend fun deleteNoteLocal(note: Note) {
-        withContext(Dispatchers.IO) {
-            noteDao.deleteNote(noteId = note.id)
+    override suspend fun deleteNoteLocal(note: Note): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                noteDao.deleteNote(createdAt = note.createdAt)
+                return@withContext true
+            }
+            catch (e: java.lang.Exception){
+                return@withContext false
+            }
+
         }
     }
 
     override suspend fun fetchNoteByCreatedAt(createdAt: String): Note? {
         return withContext(Dispatchers.IO){
-            val localNote = noteDao.fecthNoteByCreatedAt(createdAt = createdAt)
+            val localNote = noteDao.fetchNoteByCreatedAt(createdAt = createdAt)
             return@withContext localNote
         }
     }

@@ -101,12 +101,13 @@ class NoteViewModel @Inject constructor(
     }
 
     fun createNote() = viewModelScope.launch {
+        val currentDateTime = Utility.getCurrentDateTimeUtc(Utility.format)
         var newNoteObj = Note(
             id = 0,
             title = _title.value.toString(),
             note = _text.value.toString(),
-            createdAt = Utility.getCurrentDateTimeUtc(Utility.format),
-            updatedAt = "",
+            createdAt = currentDateTime,
+            updatedAt = currentDateTime,
             status = Utility.statusActive(),
         )
 
@@ -121,7 +122,6 @@ class NoteViewModel @Inject constructor(
             )
             handleDialogCreate(presentDialog = false)
 
-            //createNoteOnApi(note = newNoteCreated)
             val createNoteResponseApi = noteCreateUseCase.execute(
                 note = newNoteObj,
                 userId = _userId.value!!.toInt(),
@@ -138,6 +138,8 @@ class NoteViewModel @Inject constructor(
         val noteTemp = note.copy()
         var tempList = _listNotes.value
         noteTemp.createdAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
+        noteTemp.updatedAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.updatedAt, format = Utility.format)
+
         tempList.add(0, noteTemp)
 
         _listNotes.value = tempList
@@ -151,6 +153,7 @@ class NoteViewModel @Inject constructor(
         var tempList = _listNotes.value     //LOCALTIME
 
         noteTemp.createdAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
+        noteTemp.updatedAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.updatedAt, format = Utility.format)
 
         if (tempList.isNotEmpty()) {
             tempList.mapIndexed{ index, item ->
@@ -166,27 +169,42 @@ class NoteViewModel @Inject constructor(
             CompositionObj(tempList, "")
         )
     }
+
+    private fun deleteListNote(note: Note) = viewModelScope.launch{
+        var noteTemp = note.copy()          //UTC
+        var tempList = _listNotes.value     //LOCALTIME
+        noteTemp.createdAt = Utility.parseDateTimeUtcToLocalTime(dateTimeUtc = noteTemp.createdAt, format = Utility.format)
+        if (tempList.isNotEmpty()) {
+            val findNoteObj = tempList.singleOrNull { it.createdAt.equals(noteTemp.createdAt) }
+            findNoteObj?.let {
+                tempList.remove(findNoteObj)
+            }
+        }
+        _listNotes.value = tempList
+    }
     fun updateNote() = viewModelScope.launch {
-        var noteObj = Note(
+        val noteObj = Note(
             id = _resultNoteRecover.value!!.id,
             title = _title.value.toString(),
             note = _text.value.toString(),
             createdAt = Utility.parseDateTimeLocalToUtc(dateTimeLocal = _resultNoteRecover.value!!.createdAt, format = Utility.format)  ,//Utility.getCurrentDateTimeUtc(Utility.format),
-            updatedAt = _resultNoteRecover.value!!.updatedAt,
+            updatedAt = Utility.getCurrentDateTimeUtc(Utility.format),
             status = Utility.statusActive(),
         )
 
         val noteUpdated = noteUpdateUseCase.executeUpdate(note = noteObj)
-        noteUpdated?.let { noteUpdt->
-            handleDialogCreate(presentDialog = false)
+        noteUpdated?.let { noteUpd->
 
-            updateListNote(note = noteObj)
+            deleteListNote(note = noteObj)
+            addNewNoteToList(note = noteObj)
+
+            handleDialogCreate(presentDialog = false)
             noteUpdateUseCase.execute(
-                title = noteUpdt.title,
-                note = noteUpdt.note,
-                status = noteUpdt.status,
-                idNote = noteUpdt.id,
-                createdAt = noteUpdt.createdAt
+                title = noteUpd.title,
+                note = noteUpd.note,
+                status = noteUpd.status,
+                idNote = noteUpd.id,
+                createdAt = noteUpd.createdAt
             )
 
         }
@@ -197,7 +215,7 @@ class NoteViewModel @Inject constructor(
         _loading.value = true
         _listNotes.value = arrayListOf()
         _resultListNotes.value = Result.Empty
-        var fetchLocalListNotes = fetchNoteByUserUseCase.executeFetchNotesLocal()
+        val fetchLocalListNotes = fetchNoteByUserUseCase.executeFetchNotesLocal()
 
         if (fetchLocalListNotes.isNotEmpty()) {
             fetchLocalListNotes.forEach { note ->
@@ -205,39 +223,39 @@ class NoteViewModel @Inject constructor(
             }
         }
         //else {
-            val fetchNotesResponse = fetchNoteByUserUseCase.execute(
-                status = status,
-                userId = _userId.value!!.toInt()
-            )
+        val fetchNotesResponse = fetchNoteByUserUseCase.execute(
+            status = status,
+            userId = _userId.value!!.toInt()
+        )
 
-            fetchNotesResponse.let { listNotes->
+        fetchNotesResponse.let { listNotes->
 
-                if (listNotes.isNotEmpty()) {
-                    listNotes.forEach { note ->
+            if (listNotes.isNotEmpty()) {
+                listNotes.forEach { note ->
 
-                        val existNoteLocal = fetchLocalListNotes.filter { it.createdAt.equals(note.createdAt) }
-
-                        if (existNoteLocal.isEmpty()){
-                            addNewNoteToList(note = note)
-                            noteCreateUseCase.executeLocal(note = note)
-                        }
+                    val existNoteLocal = fetchLocalListNotes.singleOrNull { it.createdAt.equals(note.createdAt) }
+                    existNoteLocal?.let {
+                        addNewNoteToList(note = note)
+                        noteCreateUseCase.executeLocal(note = note)
                     }
                 }
-                else {
-                    _resultListNotes.value = Result.Error("")
-                }
+                return@launch
             }
+            if (fetchLocalListNotes.isEmpty())
+                _resultListNotes.value = Result.Error("")
+        }
         //}
         _loading.value = false
 
     }
 
-    fun fetchLocalListNoteById(noteId: Int) {
+    fun fetchLocalListNoteById(note: Note) {
+        var findNote = note.copy()
         _resultNoteRecover.value = null
         val listTemp = _resultListNotes.value
         if (listTemp is Result.Success){
             listTemp.data.data.map { noteItem->
-                if (noteItem.id == noteId) {
+                if (noteItem.createdAt.equals(findNote.createdAt)) {
                     _resultNoteRecover.value = noteItem
                     onNoteChange(
                         title = noteItem.title,
@@ -253,18 +271,25 @@ class NoteViewModel @Inject constructor(
     }
 
     fun deleteNoById(note: Note) = viewModelScope.launch {
-
-        noteUpdateUseCase.executeDeleteNote(note = note)
-        val resulUpdateUseCase = noteUpdateUseCase.execute(
-            idNote = note.id,
-            title = note.title,
-            note = note.note,
+        _loading.value = true
+        var deleteNote = note.copy()
+        deleteNote.createdAt = Utility.parseDateTimeLocalToUtc(dateTimeLocal = deleteNote.createdAt, format = Utility.format)
+        val responseDeleteNote =  noteUpdateUseCase.executeDeleteNote(note = deleteNote)
+        noteUpdateUseCase.execute(
+            idNote = deleteNote.id,
+            title = deleteNote.title,
+            note = deleteNote.note,
             status = "0",
-            createdAt = Utility.parseDateTimeLocalToUtc(dateTimeLocal = note.createdAt, format = Utility.format)
+            createdAt = deleteNote.createdAt
         )
-        resulUpdateUseCase?.let {
-            fetchNotesByUserId(Utility.statusActive())
+
+        responseDeleteNote.let {
+            if (it)
+                fetchNotesByUserId(Utility.statusActive())
         }
+        /*resulUpdateUseCase?.let {
+            fetchNotesByUserId(Utility.statusActive())
+        }*/
     }
 
 }

@@ -166,8 +166,8 @@ fun NoteScreen(
                                 ){
                                     NoteItem(
                                         note = it,
-                                        fetchNoteById = { noteId: Int ->
-                                            noteViewModel.fetchLocalListNoteById(noteId = noteId)
+                                        fetchNoteById = { note: Note ->
+                                            noteViewModel.fetchLocalListNoteById(note = note)
                                         }
                                     )
                                 }
@@ -438,7 +438,7 @@ fun DialogCreateNote(noteViewModel: NoteViewModel) {
 }
 
 @Composable
-fun NoteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
+fun NoteItem(note : Note, fetchNoteById: (note: Note) -> Unit) {
     OutlinedCard (
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -450,7 +450,7 @@ fun NoteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
                 vertical = 5.dp
             ),
         onClick = {
-            fetchNoteById( note.id )
+            fetchNoteById( note )
         }
 
     ){
@@ -466,7 +466,7 @@ fun NoteItem(note : Note, fetchNoteById: (noteId: Int) -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = note.createdAt,
+                    text = note.updatedAt,
                     modifier = Modifier.padding(end = 10.dp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

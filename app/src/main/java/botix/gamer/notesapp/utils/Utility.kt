@@ -33,42 +33,54 @@ class Utility {
         }
 
         fun getCurrentDateTimeUtc(format: String): String {
+            var newFormat = format
+            if (newFormat == null)
+                newFormat = Utility.format
+
             //DateTimeFormatter.ISO_INSTANT.format(Instant.now())
             return DateTimeFormatter
-                .ofPattern(format)
+                .ofPattern(newFormat)
                 .withZone(ZoneOffset.UTC)
                 .format(Instant.now())
         }
 
 
-        /*fun String.toDate(dateFormat: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date {
-            val parser = SimpleDateFormat(dateFormat)
-            parser.timeZone = timeZone
-            return parser.parse(this)
-        }
-
-        fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
-            val formatter = SimpleDateFormat(dateFormat)
-            formatter.timeZone = timeZone
-            return formatter.format(this)
-        }*/
-
         fun parseDateTimeUtcToLocalTime(dateTimeUtc: String, format: String): String {
-            val datetime = DateTimeFormatter.ofPattern(format)
+            var dateTimeNowUtc = dateTimeUtc
+            var newFormat = format
+
+            if (newFormat.isNullOrEmpty())
+                newFormat = Utility.format
+
+            if (dateTimeNowUtc.isNullOrEmpty())
+                dateTimeNowUtc = getCurrentDateTimeUtc(newFormat)
+
+
+            val datetime = DateTimeFormatter.ofPattern(newFormat)
                 .withZone(ZoneOffset.UTC)
-                .parse(dateTimeUtc)
+                .parse(dateTimeNowUtc)
             return DateTimeFormatter
-                .ofPattern(format)
+                .ofPattern(newFormat)
                 .withZone(ZoneOffset.systemDefault())
                 .format(datetime)
         }
 
         fun parseDateTimeLocalToUtc(dateTimeLocal: String, format: String): String {
-            val datetime = DateTimeFormatter.ofPattern(format)
+            var dateTimeLocalC = dateTimeLocal
+            var newFormat = format
+
+            if (newFormat.isNullOrEmpty())
+                newFormat = Utility.format
+
+            if (dateTimeLocalC.isNullOrEmpty())
+                dateTimeLocalC = getCurrentDateTimeUtc(newFormat)
+
+
+            val datetime = DateTimeFormatter.ofPattern(newFormat)
                 .withZone(ZoneOffset.systemDefault())
-                .parse(dateTimeLocal)
+                .parse(dateTimeLocalC)
             return DateTimeFormatter
-                .ofPattern(format)
+                .ofPattern(newFormat)
                 .withZone(ZoneOffset.UTC)
                 .format(datetime)
         }

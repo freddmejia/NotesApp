@@ -9,7 +9,7 @@ interface NoteRepository {
     suspend fun createNoteLocal(note: Note)
     suspend fun updateNoteLocal(note: Note)
     suspend fun fetchNotesLocal(): ArrayList<Note>
-    suspend fun deleteNoteLocal(note: Note)
+    suspend fun deleteNoteLocal(note: Note): Boolean
 
     suspend fun fetchNoteByCreatedAt(createdAt: String): Note?
 }

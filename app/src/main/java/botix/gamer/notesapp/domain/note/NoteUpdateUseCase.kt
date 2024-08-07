@@ -22,7 +22,7 @@ class NoteUpdateUseCase @Inject constructor(
         return noteRepositoryImplementation.fetchNoteByCreatedAt(createdAt = note.createdAt)
     }
 
-    suspend fun executeDeleteNote(note: Note){
-        noteRepositoryImplementation.deleteNoteLocal(note = note)
+    suspend fun executeDeleteNote(note: Note): Boolean{
+        return noteRepositoryImplementation.deleteNoteLocal(note = note)
     }
 }
